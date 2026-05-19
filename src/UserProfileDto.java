@@ -36,7 +36,11 @@ public class UserProfileDto {
 	public void setImageTitle(String imageTitle) {
 		this.imageTitle = imageTitle;
 	}
-
 	public UserProfileDto(){
+	}
+	@Override
+	public String toString() {
+		return "UserProfileDto [userNo=" + userNo + ", userName=" + userName + ", email=" + email + ", imageTitle="
+				+ imageTitle + "]";
 	}
 }

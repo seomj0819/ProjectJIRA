@@ -122,7 +122,7 @@ public class UsersDao {
 		conn = DriverManager.getConnection(url, dbId, dbPw);
 
 		String sql = "INSERT INTO users(user_no, email, google_api, user_name, image_no, verification_code, expire_date) "
-				+ "VALUES (seq_user_no.nextVal, ?, ?, ?,default_image)";
+				+ "VALUES (seq_user_no.nextVal, ?, ?, ?, 1, null, null)";
 
 		pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, email);
@@ -138,38 +138,6 @@ public class UsersDao {
 		conn.close();
 
 		return isRegister;
-	}
-
-	// 명세 1.10
-	// input : email
-	// output : -
-	// email : 유저 이메일
-	// google_api : GoogleUnique ID
-	// user_name : 유저 이름
-	// 회원가입 단계에서 eamil 중복 체크
-	boolean emailCheck(String email) throws Exception {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		boolean isExist = false;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		String sql = "SELECT email FROM users WHERE email = ?";
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, email);
-		rs = pstmt.executeQuery();
-
-		if (rs.next()) {
-			isExist = true;
-		}
-
-		rs.close();
-		pstmt.close();
-		conn.close();
-
-		return isExist;
 	}
 
 	// 명세 1.5
@@ -204,6 +172,136 @@ public class UsersDao {
 		return pw;
 	}
 
+	// 명세 1.6
+	// input : email, pw, inputCode
+	// output : int (성공하면 1, 실패하면 0)
+	// inputCode : 생성된 인증코드
+	// 실행 전에 인증코드 생성 메서드 실행 할 것
+	boolean deleteUser(String email, String pw, String inputCode) throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		boolean isDelete = false;
+		int result = 0;
+
+		Class.forName(driver);
+		conn = DriverManager.getConnection(url, dbId, dbPw);
+
+		String sql = "DELETE FROM users "
+				+ "WHERE email = ? AND pw = ? AND verification_code = ? AND expire_date > SYSDATE";
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, email);
+		pstmt.setString(2, pw);
+		pstmt.setString(3, inputCode);
+		result = pstmt.executeUpdate();
+
+		if (result > 0) {
+			isDelete = true;
+		}
+
+		pstmt.close();
+		conn.close();
+
+		return isDelete;
+	}
+
+	// 명세 1.7
+	// input : email, pw, inputCode
+	// output : int (성공하면 1, 실패하면 0)
+	// inputCode : 생성된 인증코드
+	// 실행 전에 인증코드 생성 메서드 실행 할 것
+	boolean changePw(String email, String pw, String inputCode) throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		boolean isChanged = false;
+		int result = 0;
+
+		Class.forName(driver);
+		conn = DriverManager.getConnection(url, dbId, dbPw);
+
+		String sql = "UPDATE users " + "SET pw = ? "
+				+ "WHERE email = ? AND verification_code = ? AND expire_date > SYSDATE";
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, pw);
+		pstmt.setString(2, email);
+		pstmt.setString(3, inputCode);
+		result = pstmt.executeUpdate();
+
+		if (result > 0) {
+			isChanged = true;
+		}
+
+		pstmt.close();
+		conn.close();
+
+		return isChanged;
+	}
+
+	// 명세 1.8
+	// input : user_no
+	// output : List<UserProfileDto>
+	// 해당 유저의 프로필 가져오기
+	UserProfileDto getUserProfile(int userNo) throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		UserProfileDto dto = null;
+
+		Class.forName(driver);
+		conn = DriverManager.getConnection(url, dbId, dbPw);
+
+		String sql = "SELECT u.user_no, u.user_name, u.email, i.image_title " + "	FROM image i JOIN users u "
+				+ "	ON i.image_no = u.image_no " + "WHERE u.user_no = ?";
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, userNo);
+		rs = pstmt.executeQuery();
+
+		if (rs.next()) {
+			dto = new UserProfileDto();
+			dto.setUserNo(rs.getInt("user_no"));
+			dto.setUserName(rs.getString("user_name"));
+			dto.setEmail(rs.getString("email"));
+			dto.setImageTitle(rs.getString("image_title"));
+		}
+
+		rs.close();
+		pstmt.close();
+		conn.close();
+
+		return dto;
+	}
+
+	// 명세 1.10
+	// input : email
+	// output : -
+	// email : 유저 이메일
+	// google_api : GoogleUnique ID
+	// user_name : 유저 이름
+	// 회원가입 단계에서 eamil 중복 체크
+	boolean emailCheck(String email) throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		boolean isExist = false;
+
+		Class.forName(driver);
+		conn = DriverManager.getConnection(url, dbId, dbPw);
+
+		String sql = "SELECT email FROM users WHERE email = ?";
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, email);
+		rs = pstmt.executeQuery();
+
+		if (rs.next()) {
+			isExist = true;
+		}
+
+		rs.close();
+		pstmt.close();
+		conn.close();
+
+		return isExist;
+	}
+
 	// 명세 1.11
 	// input : email, verification_code
 	// output : user_no
@@ -213,7 +311,6 @@ public class UsersDao {
 	String createVerificationCode(String email) throws Exception {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 
 		Class.forName(driver);
 		conn = DriverManager.getConnection(url, dbId, dbPw);
@@ -238,11 +335,6 @@ public class UsersDao {
 		pstmt.setString(2, email);
 		pstmt.executeUpdate();
 
-		if (rs.next()) {
-
-		}
-
-		rs.close();
 		pstmt.close();
 		conn.close();
 
@@ -250,139 +342,72 @@ public class UsersDao {
 	}
 
 	// VerificationCode Check
-	int checkEmailVerification(String email, String inputCode) throws Exception {
+	boolean checkEmailVerification(int userNo, String inputCode) throws Exception {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		int userNo = 0;
+		boolean verification = false;
 
 		Class.forName(driver);
 		conn = DriverManager.getConnection(url, dbId, dbPw);
 
 		// Check Code
 		String sql = "SELECT user_no " + "FROM users "
-				+ "WHERE email = ? AND verification_code = ? AND expire_date > SYSDATE";
+				+ "WHERE user_no = ? AND verification_code = ? AND expire_date > SYSDATE";
 		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, email);
+		pstmt.setInt(1, userNo);
 		pstmt.setString(2, inputCode);
 		rs = pstmt.executeQuery();
 
 		if (rs.next()) {
-			userNo = rs.getInt("user_no");
+			verification = true;
 		}
 
 		rs.close();
 		pstmt.close();
 		conn.close();
 
-		return userNo;
+		return verification;
 	}
 
-	// 명세 1.6
-	// input : email, pw, inputCode
-	// output : int (성공하면 1, 실패하면 0)
-	// inputCode : 생성된 인증코드
-	// 실행 전에 인증코드 생성 메서드 실행 할 것
-	int deleteUser(String email, String pw, String inputCode) throws Exception {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		int isDelete = 0;
-		int result = 0;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		String sql = "DELETE FROM users "
-				+ "WHERE email = ? AND pw = ? AND verification_code = ? AND expire_date > SYSDATE;";
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, email);
-		pstmt.setString(2, pw);
-		pstmt.setString(3, inputCode);
-		result = pstmt.executeUpdate();
-
-		if (result > 0) {
-			isDelete = 1;
-		}
-
-		pstmt.close();
-		conn.close();
-		
-		return isDelete;
-	}
-
-	//명세 1.7
-	// input : email, pw, inputCode
-	// output : int (성공하면 1, 실패하면 0)
-	// inputCode : 생성된 인증코드
-	// 실행 전에 인증코드 생성 메서드 실행 할 것
-	int changePw(String email, String pw, String inputCode) throws Exception{
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		int isChanged = 0;
-		int result = 0;
-		
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-		
-		String sql = "UPDATE users "
-				+ "SET pw = ? "
-				+ "WHERE email = ? AND verification_code = ? AND expire_Date > SYSDATE";
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, pw);
-		pstmt.setString(2, email);
-		pstmt.setString(3, inputCode);
-		result = pstmt.executeUpdate();
-		
-		if(result > 0) {
-			isChanged = 1;
-		}
-		
-		pstmt.close();
-		conn.close();
-		
-		return isChanged;
-	}
-	
-	//명세 1.8
-	// input : user_no
-	// output : List<UserProfileDto>
-	// 해당 유저의 프로필 가져오기
-	UserProfileDto getUserProfile(int userNo) throws Exception{
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		UserProfileDto dto = null;
-		
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-		
-		String sql = "SELECT u.user_no, u.user_name, u.email, i.image_title "
-				+ "	FROM image i JOIN users u "
-				+ "	ON i.image_no = u.image_no "
-				+ "WHERE u.user_no = ?";
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setInt(1, userNo);
-		rs = pstmt.executeQuery();
-		
-		if(rs.next()) {
-			dto = new UserProfileDto();
-			dto.setUserNo(rs.getInt("user_no"));
-			dto.setUserName(rs.getString("user_name"));
-			dto.setEmail(rs.getString("email"));
-			dto.setImageTitle(rs.getString("image_title"));
-		}
-		
-		rs.close();
-		pstmt.close();
-		conn.close();
-		
-		return dto;
-	}
-	
 	public static void main(String[] args) throws Exception {
 		UsersDao dao = new UsersDao();
-		int userNo = dao.checkGoogleLogin("admin@admin.com", "googleApi");
-		System.out.println("로그인 유저 번호 : " + userNo);
+		// 1.1 Local Login (clear!)
+//		System.out.println(dao.checkLocalLogin("seomj081923@gmail.com", "12345"));
 
+		// 1.2 Check Google Login (clear!)
+//		System.out.println(dao.checkGoogleLogin("abc@abc.com", "google_api"));
+		
+		// 1.3 Local Register (clear!)
+//		if(dao.localRegister("seomj081923@gmail.com", "12345", "MJ")) {
+//			System.out.println("성공!");
+//		}
+
+		// 1.4 Google Retister (clear!)
+//		if(dao.googleRegister("abc@abc.com", "google_api", "SK")) {
+//			System.out.println("성공!");
+//		}
+		
+		// 1.5 Find Password (clear!)
+//		System.out.println(dao.findPassword("seomj081923@gmail.com"));
+		
+		// 1.6 Delete User (clear!)
+//		System.out.println(dao.deleteUser("abc@abc.com", null, null));
+		
+		//1.7 Change Password (clear!)
+//		System.out.println(dao.changePw("abc@abc.com", null, null));
+		
+		// 1.8 Get User Profile (clear!)
+//		UserProfileDto dto = dao.getUserProfile(2);
+//		System.out.println(dto);
+		
+		// 1.10 Email Check (clear!)
+//		if(dao.emailCheck("seomj081923@gmail.com")) {
+//			System.out.println("중복됨!");
+//		}
+		
+		// 1.11 Email Verification (clear!)
+//		dao.createVerificationCode("abc@abc.com");
+//		System.out.println(dao.checkEmailVerification(5, "X5r7G2"));
 	}
 }
