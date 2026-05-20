@@ -23,6 +23,7 @@ public class UsersDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		int userNo = 0;
+
 		Class.forName(driver);
 		conn = DriverManager.getConnection(url, dbId, dbPw);
 		String sql = "SELECT user_no " + "FROM users " + "WHERE email = ? AND pw = ?";
@@ -315,17 +316,8 @@ public class UsersDao {
 		Class.forName(driver);
 		conn = DriverManager.getConnection(url, dbId, dbPw);
 
-		// Create Code
-		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-		SecureRandom random = new SecureRandom();
-		StringBuilder code = new StringBuilder();
-
-		for (int i = 0; i < 6; i++) {
-			int t = random.nextInt(chars.length());
-			code.append(chars.charAt(t));
-		}
-
-		String verificationCode = code.toString();
+		//Create Code
+		String verificationCode = RandomCodeUtil.generateRandomCode();
 
 		// Update Code
 		String sql = "UPDATE users " + "SET verification_code = ?, " + "expire_date = SYSDATE + (1/24/60 * 10) "
@@ -377,7 +369,7 @@ public class UsersDao {
 
 		// 1.2 Check Google Login (clear!)
 //		System.out.println(dao.checkGoogleLogin("abc@abc.com", "google_api"));
-		
+
 		// 1.3 Local Register (clear!)
 //		if(dao.localRegister("seomj081923@gmail.com", "12345", "MJ")) {
 //			System.out.println("성공!");
@@ -387,25 +379,25 @@ public class UsersDao {
 //		if(dao.googleRegister("abc@abc.com", "google_api", "SK")) {
 //			System.out.println("성공!");
 //		}
-		
+
 		// 1.5 Find Password (clear!)
 //		System.out.println(dao.findPassword("seomj081923@gmail.com"));
-		
+
 		// 1.6 Delete User (clear!)
 //		System.out.println(dao.deleteUser("abc@abc.com", null, null));
-		
-		//1.7 Change Password (clear!)
+
+		// 1.7 Change Password (clear!)
 //		System.out.println(dao.changePw("abc@abc.com", null, null));
-		
+
 		// 1.8 Get User Profile (clear!)
 //		UserProfileDto dto = dao.getUserProfile(2);
 //		System.out.println(dto);
-		
+
 		// 1.10 Email Check (clear!)
 //		if(dao.emailCheck("seomj081923@gmail.com")) {
 //			System.out.println("중복됨!");
 //		}
-		
+
 		// 1.11 Email Verification (clear!)
 //		dao.createVerificationCode("abc@abc.com");
 //		System.out.println(dao.checkEmailVerification(5, "X5r7G2"));
