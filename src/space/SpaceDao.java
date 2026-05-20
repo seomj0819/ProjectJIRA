@@ -48,6 +48,7 @@ public class SpaceDao {
 		// user_no : 현재 유저번호
 		// user_role = '관리자' 인 경우만 삭제가능
 	boolean DeleteSpace(String space_key, int user_no) throws Exception {
+		boolean isDeleted0 = false;
 		boolean isDeleted = false;
 		String driver = "oracle.jdbc.driver.OracleDriver";
 		String url = "jdbc:oracle:thin:@localhost:1521:xe";
@@ -56,14 +57,30 @@ public class SpaceDao {
 
 		Class.forName(driver);
 		Connection conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		String sql = "DELETE FROM space WHERE space_key = ? AND space_key IN (SELECT space_key FROM space_members WHERE user_role = '관리자' AND user_no = ?)";
+		
+		String sql0 = "DELETE FROM space_members "
+				+ "WHERE space_key = ? "
+				+ "AND space_key IN ( "
+				+ "SELECT space_key FROM space_members "
+				+ "WHERE user_role = '관리자' "
+				+ "AND user_no = ? "
+				+ ")";
+		PreparedStatement pstmt0 = conn.prepareStatement(sql0);
+		pstmt0.setString(1, space_key);
+		pstmt0.setInt(2, user_no);
+		int result0 = pstmt0.executeUpdate();
+		
+		if(result0 > 0) {
+			isDeleted0 = true;
+		}
+		
+		String sql = "DELETE FROM space "
+				+ "WHERE space_key = ? ";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, space_key);
-		pstmt.setInt(2, user_no);
 		int result = pstmt.executeUpdate();
 
-		if (result > 0) {
+		if (result > 0 && isDeleted0) {
 			isDeleted = true;
 		}
 
@@ -181,7 +198,7 @@ public class SpaceDao {
 		//2.1 Create Space(clear!)
 		//System.out.println(dao.CreateSpace("ABCD", "Project1", "Y"));
 		//2.2 Delete Space(clear!)
-		System.out.println(dao.DeleteSpace("ABCD", 1));
+		//System.out.println(dao.DeleteSpace("ABCD", 1));
 		//2.3 Update Space(clear!)
 		//System.out.println(dao.UpdateSpace("ABCD", "Newproj1", "EFGH", 1));
 		//2.4 Show Space List(clear!)
