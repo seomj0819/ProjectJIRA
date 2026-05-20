@@ -13,8 +13,8 @@ public class SpaceDao {
 		// output : -
 		// space_key, space_title : 유저입력
 		// space_status : 공개(Y)/비공개(N)
-		// image_no : 스페이스 이미지 번호
-	boolean CreateSpace(String space_key, String space_title, int space_order, String space_status, int image_no)
+		// image_no : default 디폴트 스페이스 이미지 번호(1)
+	boolean CreateSpace(String space_key, String space_title, String space_status)
 			throws Exception {
 		boolean isCreated = false;
 		String driver = "oracle.jdbc.driver.OracleDriver";
@@ -25,7 +25,7 @@ public class SpaceDao {
 		Class.forName(driver);
 		Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 
-		String sql = "INSERT INTO space(space_key, space_title, space_order, space_status,  image_no) VALUES (?, ?, seq_space_order.nextVal, ?, default_image)";
+		String sql = "INSERT INTO space(space_key, space_title, space_order, space_status,  image_no) VALUES (?, ?, seq_space_order.nextVal, ?, 1)";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, space_key);
 		pstmt.setString(2, space_title);
@@ -176,7 +176,9 @@ public class SpaceDao {
 	}
 	
 
-	public static void main(String[] args) {
-
+	public static void main(String[] args) throws Exception {
+		SpaceDao dao = new SpaceDao();
+		//2.1 Create Space(clear!)
+		//System.out.println(dao.CreateSpace("ABCD", "Project1", "Y"));
 	}
 }
