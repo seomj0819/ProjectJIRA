@@ -25,7 +25,7 @@ public class SpaceDao {
 		Class.forName(driver);
 		Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 
-		String sql = "INSERT INTO space(space_key, space_title, space_order, space_status,  image_no) VALUES (?, ?, seq_space_order.nextVal, ?, 1)";
+		String sql = "INSERT INTO space(space_key, space_title, space_order, space_status, image_no) VALUES (?, ?, seq_space_order.nextVal, ?, 1)";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, space_key);
 		pstmt.setString(2, space_title);
@@ -47,7 +47,7 @@ public class SpaceDao {
 		// space_key : 지우려는 스페이스키
 		// user_no : 현재 유저번호
 		// user_role = '관리자' 인 경우만 삭제가능
-	boolean DeleteSpace(String space_key, int user_no) throws Exception { // user_no = current user_no
+	boolean DeleteSpace(String space_key, int user_no) throws Exception {
 		boolean isDeleted = false;
 		String driver = "oracle.jdbc.driver.OracleDriver";
 		String url = "jdbc:oracle:thin:@localhost:1521:xe";
@@ -57,7 +57,7 @@ public class SpaceDao {
 		Class.forName(driver);
 		Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 
-		String sql = "DELETE FROM space WHERE space_key = ? AND space_key IN (SELECT space_key FROM space_members WHERE user_role = '관리자' AND user_no = ?";
+		String sql = "DELETE FROM space WHERE space_key = ? AND space_key IN (SELECT space_key FROM space_members WHERE user_role = '관리자' AND user_no = ?)";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, space_key);
 		pstmt.setInt(2, user_no);
@@ -121,7 +121,7 @@ public class SpaceDao {
 		Class.forName(driver);
 		Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 
-		String sql = "SELECT sm.space_key, space_title, image_no FROM space_member sm INNER JOIN space s ON sm.space_key = s.space_key WHERE sm.user_no = ? ORDER BY space_order";
+		String sql = "SELECT sm.space_key, space_title, image_no FROM space_members sm INNER JOIN space s ON sm.space_key = s.space_key WHERE sm.user_no = ? ORDER BY space_order";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setInt(1, user_no);
 		
@@ -180,5 +180,13 @@ public class SpaceDao {
 		SpaceDao dao = new SpaceDao();
 		//2.1 Create Space(clear!)
 		//System.out.println(dao.CreateSpace("ABCD", "Project1", "Y"));
+		//2.2 Delete Space(clear!)
+		//System.out.println(dao.DeleteSpace("ABCD", 1));
+		//2.3 Update Space(clear!)
+		//System.out.println(dao.UpdateSpace("ABCD", "Newproj1", "EFGH", 1));
+		//2.4 Show Space List(clear!)
+		System.out.println(dao.ShowSpaceList(1));
+		//2.5 Show Space Profile(clear!)
+		System.out.println(dao.ShowSpaceProfile("ABCD"));
 	}
 }
