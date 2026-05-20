@@ -181,12 +181,12 @@ public class SpaceDao {
 		//2.1 Create Space(clear!)
 		//System.out.println(dao.CreateSpace("ABCD", "Project1", "Y"));
 		//2.2 Delete Space(clear!)
-		//System.out.println(dao.DeleteSpace("ABCD", 1));
+		System.out.println(dao.DeleteSpace("ABCD", 1));
 		//2.3 Update Space(clear!)
 		//System.out.println(dao.UpdateSpace("ABCD", "Newproj1", "EFGH", 1));
 		//2.4 Show Space List(clear!)
-		System.out.println(dao.ShowSpaceList(1));
+		//System.out.println(dao.ShowSpaceList(1));
 		//2.5 Show Space Profile(clear!)
-		System.out.println(dao.ShowSpaceProfile("ABCD"));
+		//System.out.println(dao.ShowSpaceProfile("ABCD"));
 	}
 }
