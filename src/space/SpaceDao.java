@@ -79,7 +79,7 @@ public class SpaceDao {
 		// new_space_key : 새로운 스페이스키
 		// new_space_title : 새로운 스페이스타이틀
 		// user_no : 현재 유저번호
-		// user_role = '관리자' 인 경우만 삭제가능
+		// user_role = '관리자' 인 경우만 수정가능
 	boolean UpdateSpace(String space_key, String new_space_title, String new_space_key, int user_no) throws Exception {
 		boolean isUpdated = false;
 		String driver = "oracle.jdbc.driver.OracleDriver";
