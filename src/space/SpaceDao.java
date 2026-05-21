@@ -97,6 +97,7 @@ public class SpaceDao {
 		// new_space_title : 새로운 스페이스타이틀
 		// user_no : 현재 유저번호
 		// user_role = '관리자' 인 경우만 수정가능
+		// 테이블에 트리거 적용
 	boolean UpdateSpace(String space_key, String new_space_title, String new_space_key, int user_no) throws Exception {
 		boolean isUpdated = false;
 		String driver = "oracle.jdbc.driver.OracleDriver";
@@ -107,7 +108,13 @@ public class SpaceDao {
 		Class.forName(driver);
 		Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 
-		String sql = "UPDATE space SET space_title = ?, space_key = ? WHERE space_key IN (SELECT space_key FROM space_members WHERE user_role = '관리자' AND user_no = ?) AND space_key = ?";
+		String sql = "UPDATE space SET space_title = ?, space_key = ? "
+				+ "WHERE space_key IN ("
+				+ "SELECT space_key "
+				+ "FROM space_members "
+				+ "WHERE user_role = '관리자' "
+				+ "AND user_no = ?) "
+				+ "AND space_key = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, new_space_title);
 		pstmt.setString(2, new_space_key);
