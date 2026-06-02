@@ -86,6 +86,7 @@ public class TaskDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		List<TaskInfoDto> list = new ArrayList<>();
+		
 		Class.forName(driver);
 		conn = DriverManager.getConnection(url, dbId, dbPw);
 		
@@ -193,10 +194,43 @@ public class TaskDao {
 		return list;
 	}
 	
-	public static void main(String[] args)  throws Exception{
+	// 명세 4.3
+	// input : task_id
+	boolean updateTask (
+			String spaceKey,
+			int taskNo,
+			String updateDescribe,
+			String updateTitle,
+			String updateDueDate,
+			String updateWorkerNo,
+			String updateLabel,
+			String updatePriority,
+			String updateStatus,
+			int updateTaskOrder
+			) throws Exception {
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		Class.forName(driver);
+		conn = DriverManager.getConnection(url, dbId, dbPw);
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE task ");
+		sql.append("WHERE space_key = ? ");
+		sql.append("AND task_no = ?");
+		
+		return true;
+	}
+	
+	public static void main(String[] args)  throws Exception {
 		TaskDao dao = new TaskDao();
 		
 		// 4.1 Create Task (clear!)
 //		System.out.println(dao.createTask("ABCD", 2, 5, "담배피러가기", "2개 피우기", "2026-06-02", null, 1, "medium", null, 2, null));
+		
+		// 4.2 Search Task By SearchCondition
+		
 	}
 }
