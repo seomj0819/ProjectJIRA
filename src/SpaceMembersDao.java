@@ -20,13 +20,26 @@ public class SpaceMembersDao {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		boolean isDuplicate = false;
 		
 		Class.forName(driver);
 		conn = DriverManager.getConnection(url, dbId, dbPw);
 		
 		String sql = "SELECT * FROM space_members WHERE space_key = ? AND user_no = ?";
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, spaceKey);
+		pstmt.setInt(2, currentUserNo);
+		rs = pstmt.executeQuery();
 		
-		return false;
+		if(rs.next()) {
+			isDuplicate = true;
+		}
+		
+		rs.close();
+		pstmt.close();
+		conn.close();
+		
+		return isDuplicate;
 	}
 	
 	void createInviteCode(String spaceKey, int userNo, String userRole, int currentUserNo) throws Exception {
