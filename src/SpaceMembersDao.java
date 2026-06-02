@@ -163,21 +163,21 @@ public class SpaceMembersDao {
 		pstmt.executeQuery();
 
 		pstmt.close();
-
-		sql = "UPDATE raply SET writer_no = null WHERE writer_no = ? AND space_key = ?";
+		
+		sql = "UPDATE reply SET writer_no = null WHERE writer_no = ? AND space_key = ?";
 		pstmt = conn.prepareStatement(sql);
 		pstmt.setInt(1, userNo);
 		pstmt.setString(2, spaceKey);
 		pstmt.executeQuery();
 
 		pstmt.close();
-
-		sql = "DELETE FROM space_members" + "WHERE user_no = ? AND space_key = ?";
+		
+		sql = "DELETE FROM space_members " + "WHERE user_no = ? AND space_key = ?";
 		pstmt = conn.prepareStatement(sql);
 		pstmt.setInt(1, userNo);
 		pstmt.setString(2, spaceKey);
 		pstmt.executeQuery();
-
+		
 		pstmt.close();
 		conn.close();
 
@@ -205,13 +205,13 @@ public class SpaceMembersDao {
 				+ "    i.image_title "
 				+ "FROM users u "
 				+ "LEFT OUTER JOIN image i "
-				+ "             ON u.image_no = i.image_no "
+				+ "	   ON u.image_no = i.image_no "
 				+ "WHERE u.user_no IN ( "
 				+ "    SELECT DISTINCT space.user_no "
-				+ "    FROM space_member space "
+				+ "    FROM space_members space "
 				+ "    WHERE space.space_key IN ( "
 				+ "        SELECT my_space.space_key "
-				+ "        FROM space_member my_space "
+				+ "        FROM space_members my_space "
 				+ "        WHERE my_space.user_no = ? "
 				+ "    ) "
 				+ "    AND space.user_no != ? "
@@ -279,5 +279,41 @@ public class SpaceMembersDao {
 		// 3.1 Invite Member (clear!)
 //		dao.createInviteCode("ABCD", 5, "±¸¼º¿ø", 2);
 //		System.out.println(dao.checkInviteCode("KfJCEW", "ABCD", 5));
+		
+		// 3.2 Search User Role (clear!)
+//		System.out.println(dao.searchUserRole("ABCD", 1));
+		
+		// 3.3 Delete Space Member (clear!)
+//		System.out.println(dao.deleteSpaceMember("ABCD", 5));
+		
+		// 3.4 Get All Space Members (clear!)
+//		List<UserProfileDto> spaceMemberList = dao.getAllSpaceMembers(2);
+//		if(spaceMemberList.isEmpty()) {
+//			System.out.println("No One Here...");
+//		}
+//		else {
+//			for (UserProfileDto dto : spaceMemberList) {
+//				int userNo = dto.getUserNo();
+//				String userName = dto.getUserName();
+//				String userEmail = dto.getEmail();
+//				String userImage = dto.getImageTitle();
+//				System.out.println(userNo + ", " + userName + ", " + userEmail + ", " + userImage);
+//			}
+//		}
+		
+		// 3.5 Get Space Member Profile List (clear!)
+//		List<UserProfileDto> allSpaceMembers = dao.getSpaceMemberList("ABCD");
+//		if(allSpaceMembers.isEmpty()) {
+//			System.out.println("No One Here...");
+//		}
+//		else {
+//			for(UserProfileDto dto : allSpaceMembers) {
+//				int userNo = dto.getUserNo();
+//				String userName = dto.getUserName();
+//				String userEmail = dto.getEmail();
+//				String userImage = dto.getImageTitle();
+//				System.out.println(userNo + ", " + userName + ", " + userEmail + ", " + userImage);
+//			}
+//		}
 	}
 }
