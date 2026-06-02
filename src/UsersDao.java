@@ -316,7 +316,7 @@ public class UsersDao {
 		Class.forName(driver);
 		conn = DriverManager.getConnection(url, dbId, dbPw);
 
-		//Create Code
+		// Create Code
 		String verificationCode = RandomCodeUtil.generateRandomCode();
 
 		// Update Code
