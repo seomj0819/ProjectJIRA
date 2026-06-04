@@ -363,7 +363,8 @@ public class UsersDao {
 	}
 
 	public static void main(String[] args) throws Exception {
-		UsersDao dao = new UsersDao();
+//		UsersDao dao = new UsersDao();
+		
 		// 1.1 Local Login (clear!)
 //		System.out.println(dao.checkLocalLogin("seomj081923@gmail.com", "12345"));
 
