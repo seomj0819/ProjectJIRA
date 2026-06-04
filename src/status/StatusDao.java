@@ -218,7 +218,10 @@ public class StatusDao {
 		}
 		return isDeleted;
 	}
-
+		// 명세 13.5
+		// input : space_key
+		// output : StatusDto(status_no, status_title, status_color, color_code), totalCount
+		// space_key : 현재 스페이스키
 	List<StatusDto> ShowStatus(String space_key) {
 		List<StatusDto> list = new ArrayList<>();
 		String driver = "oracle.jdbc.driver.OracleDriver";
@@ -259,10 +262,7 @@ public class StatusDao {
 	public static void main(String[] args) {
 		StatusDao dao = new StatusDao();
 		
-		// 명세 13.5
-		// input : space_key
-		// output : StatusDto(status_no, status_title, status_color, color_code), totalCount
-		// space_key : 현재 스페이스키
+		//13.5 ShowStatus(Clear!)
 		List<StatusDto> list = dao.ShowStatus("ABCD");
 		System.out.println(list);
 		int totalCount = list.size();
