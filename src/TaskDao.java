@@ -16,7 +16,7 @@ public class TaskDao {
 	// task_title, task_description, due_date, label_title, status,
 	// priority, upper_task_no, task_order, image_no, summary
 	// output : -
-	boolean createTask(
+	boolean createTask (
 			String spaceKey, 
 			int currentUserNo, 
 			int workerNo, 
@@ -71,7 +71,7 @@ public class TaskDao {
 	// task_title, task_description, due_date, label_title, status,
 	// priority, upper_task_no, task_order, image_no, summary
 	// output : List<TaskInfoDto>
-	List<TaskInfoDto> SearchTaskBySearchCondition(
+	List<TaskInfoDto> SearchTaskBySearchCondition (
 			int currentUserNo, 
 			String searchKeyWord, 
 			Integer searchWorkerNo,
@@ -166,22 +166,21 @@ public class TaskDao {
 		rs = pstmt.executeQuery();
 
 		while (rs.next()) {
-			TaskInfoDto dto = new TaskInfoDto.Builder()
-					.spaceKey(rs.getString("space_key"))
-					.taskNo(rs.getInt("task_no"))
-					.creatorNo(rs.getInt("creator_no"))
-					.workerNo(rs.getInt("worker_no"))
-					.taskTitle(rs.getString("task_title"))
-					.taskDescription(rs.getString("task_description"))
-					.dueDate(rs.getString("due_date"))
-					.labelTitle(rs.getString("label_title"))
-					.statusNo(rs.getString("status_no"))
-					.priority(rs.getString("priority"))
-					.upperTaskNo(rs.getObject("upper_task_no") != null ? rs.getInt("upper_task_no") : null)
-					.taskOrder(rs.getInt("task_order"))
-					.summary(rs.getString("summary"))
-					.build();
-			list.add(dto);
+			TaskInfoDto dto = new TaskInfoDto();
+					dto.setSpaceKey(rs.getString("space_key"));
+					dto.setTaskNo(rs.getInt("task_no"));
+					dto.setCreatorNo(rs.getInt("creator_no"));
+					dto.setWorkerNo(rs.getInt("worker_no"));
+					dto.setTaskTitle(rs.getString("task_title"));
+					dto.setTaskDescription(rs.getString("task_description"));
+					dto.setDueDate(rs.getString("due_date"));
+					dto.setLabelTitle(rs.getString("label_title"));
+					dto.setStatusNo(rs.getString("status_no"));
+					dto.setPriority(rs.getString("priority"));
+					dto.setUpperTaskNo(rs.getObject("upper_task_no") != null ? rs.getInt("upper_task_no") : null);
+					dto.setTaskOrder(rs.getInt("task_order"));
+					dto.setSummary(rs.getString("summary"));
+				list.add(dto);
 		}
 
 		rs.close();
@@ -193,7 +192,7 @@ public class TaskDao {
 
 	// ¸í¼¼ 4.3
 	// input : task_id
-	boolean updateTask(
+	boolean updateTask (
 			String currentSpaceKey, 
 			int taskNo, 
 			String updateTitle,
@@ -292,7 +291,7 @@ public class TaskDao {
 	}
 
 	// Update Task Order
-	boolean updateTaskOrder(int selectedTaskNo, int beforeMovedTaskNo, int afterMovedTaskNo, int statusNo, String currentSpaceKey)
+	boolean updateTaskOrder (int selectedTaskNo, int beforeMovedTaskNo, int afterMovedTaskNo, int statusNo, String currentSpaceKey)
 			throws Exception {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -396,22 +395,21 @@ public class TaskDao {
 		rs = pstmt.executeQuery();
 
 		while (rs.next()) {
-			TaskInfoDto dto = new TaskInfoDto.Builder()
-					.spaceKey(rs.getString("space_key"))
-					.taskNo(rs.getInt("task_no"))
-					.creatorNo(rs.getInt("creator_no"))
-					.workerNo(rs.getInt("worker_no"))
-					.taskTitle(rs.getString("task_title"))
-					.taskDescription(rs.getString("task_description"))
-					.dueDate(rs.getString("due_date"))
-					.labelTitle(rs.getString("label_title"))
-					.statusNo(rs.getString("status_no"))
-					.priority(rs.getString("priority"))
-					.upperTaskNo(rs.getObject("upper_task_no") != null ? rs.getInt("upper_task_no") : null)
-					.taskOrder(rs.getInt("task_order"))
-					.summary(rs.getString("summary"))
-					.build();
-			list.add(dto);
+			TaskInfoDto dto = new TaskInfoDto();
+					dto.setSpaceKey(rs.getString("space_key"));
+					dto.setTaskNo(rs.getInt("task_no"));
+					dto.setCreatorNo(rs.getInt("creator_no"));
+					dto.setWorkerNo(rs.getInt("worker_no"));
+					dto.setTaskTitle(rs.getString("task_title"));
+					dto.setTaskDescription(rs.getString("task_description"));
+					dto.setDueDate(rs.getString("due_date"));
+					dto.setLabelTitle(rs.getString("label_title"));
+					dto.setStatusNo(rs.getString("status_no"));
+					dto.setPriority(rs.getString("priority"));
+					dto.setUpperTaskNo(rs.getObject("upper_task_no") != null ? rs.getInt("upper_task_no") : null);
+					dto.setTaskOrder(rs.getInt("task_order"));
+					dto.setSummary(rs.getString("summary"));
+				list.add(dto);
 		}
 
 		rs.close();
@@ -442,22 +440,21 @@ public class TaskDao {
 		rs = pstmt.executeQuery();
 
 		while (rs.next()) {
-			TaskInfoDto dto = new TaskInfoDto.Builder()
-					.spaceKey(rs.getString("space_key"))
-					.taskNo(rs.getInt("task_no"))
-					.creatorNo(rs.getInt("creator_no"))
-					.workerNo(rs.getInt("worker_no"))
-					.taskTitle(rs.getString("task_title"))
-					.taskDescription(rs.getString("task_description"))
-					.dueDate(rs.getString("due_date"))
-					.labelTitle(rs.getString("label_title"))
-					.statusNo(rs.getString("status_no"))
-					.priority(rs.getString("priority"))
-					.upperTaskNo(rs.getObject("upper_task_no") != null ? rs.getInt("upper_task_no") : null)
-					.taskOrder(rs.getInt("task_order"))
-					.summary(rs.getString("summary"))
-					.build();
-			list.add(dto);
+			TaskInfoDto dto = new TaskInfoDto();
+					dto.setSpaceKey(rs.getString("space_key"));
+					dto.setTaskNo(rs.getInt("task_no"));
+					dto.setCreatorNo(rs.getInt("creator_no"));
+					dto.setWorkerNo(rs.getInt("worker_no"));
+					dto.setTaskTitle(rs.getString("task_title"));
+					dto.setTaskDescription(rs.getString("task_description"));
+					dto.setDueDate(rs.getString("due_date"));
+					dto.setLabelTitle(rs.getString("label_title"));
+					dto.setStatusNo(rs.getString("status_no"));
+					dto.setPriority(rs.getString("priority"));
+					dto.setUpperTaskNo(rs.getObject("upper_task_no") != null ? rs.getInt("upper_task_no") : null);
+					dto.setTaskOrder(rs.getInt("task_order"));
+					dto.setSummary(rs.getString("summary"));
+				list.add(dto);
 		}
 
 		rs.close();
@@ -489,22 +486,21 @@ public class TaskDao {
 		rs = pstmt.executeQuery();
 
 		while (rs.next()) {
-			TaskInfoDto dto = new TaskInfoDto.Builder()
-					.spaceKey(rs.getString("space_key"))
-					.taskNo(rs.getInt("task_no"))
-					.creatorNo(rs.getInt("creator_no"))
-					.workerNo(rs.getInt("worker_no"))
-					.taskTitle(rs.getString("task_title"))
-					.taskDescription(rs.getString("task_description"))
-					.dueDate(rs.getString("due_date"))
-					.labelTitle(rs.getString("label_title"))
-					.statusNo(rs.getString("status_no"))
-					.priority(rs.getString("priority"))
-					.upperTaskNo(rs.getObject("upper_task_no") != null ? rs.getInt("upper_task_no") : null)
-					.taskOrder(rs.getInt("task_order"))
-					.summary(rs.getString("summary"))
-					.build();
-			list.add(dto);
+			TaskInfoDto dto = new TaskInfoDto();
+					dto.setSpaceKey(rs.getString("space_key"));
+					dto.setTaskNo(rs.getInt("task_no"));
+					dto.setCreatorNo(rs.getInt("creator_no"));
+					dto.setWorkerNo(rs.getInt("worker_no"));
+					dto.setTaskTitle(rs.getString("task_title"));
+					dto.setTaskDescription(rs.getString("task_description"));
+					dto.setDueDate(rs.getString("due_date"));
+					dto.setLabelTitle(rs.getString("label_title"));
+					dto.setStatusNo(rs.getString("status_no"));
+					dto.setPriority(rs.getString("priority"));
+					dto.setUpperTaskNo(rs.getObject("upper_task_no") != null ? rs.getInt("upper_task_no") : null);
+					dto.setTaskOrder(rs.getInt("task_order"));
+					dto.setSummary(rs.getString("summary"));
+				list.add(dto);
 		}
 
 		rs.close();
