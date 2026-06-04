@@ -27,7 +27,6 @@ public class TaskDao {
 			int statusNo, 
 			String priority, 
 			Integer upperTaskNo, 
-			int taskOrder,
 			String summary
 			) throws Exception {
 
@@ -39,8 +38,10 @@ public class TaskDao {
 		Class.forName(driver);
 		conn = DriverManager.getConnection(url, dbId, dbPw);
 
-		String sql = "INSERT INTO task (space_key, task_no, creator_no, worker_no, task_title, task_description, due_date, label_title, status, priority, upper_task_no, task_order, summary) "
-				+ "VALUES (?, seq_task_no.nextval, ?, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD HH24:MI:SS'), ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO task (space_key, task_no, creator_no, "
+				+ "						worker_no, task_title, task_description, due_date, label_title, "
+				+ "						status_no, priority, upper_task_no, task_order, summary) "
+				+ "VALUES (?, seq_task_no.nextval, ?, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD HH24:MI:SS'), ?, ?, ?, ?, seq_task_order.nextval, ?)";
 		pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, spaceKey);
 		pstmt.setInt(2, currentUserNo);
@@ -52,8 +53,7 @@ public class TaskDao {
 		pstmt.setInt(8, statusNo);
 		pstmt.setString(9, priority);
 		pstmt.setObject(10, upperTaskNo);
-		pstmt.setInt(11, taskOrder);
-		pstmt.setString(12, summary);
+		pstmt.setString(11, summary);
 		result = pstmt.executeUpdate();
 
 		if (result != 0) {
@@ -75,7 +75,7 @@ public class TaskDao {
 			int currentUserNo, 
 			String searchKeyWord, 
 			Integer searchWorkerNo,
-			Integer searchCreatorNo,
+			Integer searchCreatorNo, 
 			String searchStatusNo, 
 			String searchSpaceKey, 
 			String searchPriority,
@@ -123,10 +123,12 @@ public class TaskDao {
 
 		if (searchDueDate != null && !searchDueDate.isBlank() && operatorDueDate != null
 				&& !operatorDueDate.isBlank()) {
-			sql.append("AND due_date " + operatorDueDate + " ? ");
+			sql.append("AND TO_CHAR(due_date) " + operatorDueDate + " ? ");
 		}
 
 		sql.append("ORDER BY task_order ASC");
+
+		pstmt = conn.prepareStatement(sql.toString());
 
 		int paramIndex = 1;
 		pstmt.setInt(paramIndex++, currentUserNo);
@@ -159,7 +161,6 @@ public class TaskDao {
 		if (searchDueDate != null && !searchDueDate.isBlank() && operatorDueDate != null
 				&& !operatorDueDate.isBlank()) {
 			pstmt.setString(paramIndex++, searchDueDate);
-
 		}
 
 		rs = pstmt.executeQuery();
@@ -193,10 +194,10 @@ public class TaskDao {
 	// 명세 4.3
 	// input : task_id
 	boolean updateTask(
-			String currentSpaceKey,
+			String currentSpaceKey, 
 			int taskNo, 
-			String updateDescribe, 
 			String updateTitle,
+			String updateDescription, 
 			String updateDueDate, 
 			Integer updateWorkerNo, 
 			String updateLabel, 
@@ -216,8 +217,8 @@ public class TaskDao {
 		sql.append("UPDATE task ");
 		sql.append("SET task_no = task_no ");
 
-		if (updateDescribe != null && !updateDescribe.isBlank()) {
-			sql.append(", task_describe = ? ");
+		if (updateDescription != null && !updateDescription.isBlank()) {
+			sql.append(", task_description = ? ");
 		}
 
 		if (updateTitle != null && !updateTitle.isBlank()) {
@@ -246,10 +247,10 @@ public class TaskDao {
 
 		sql.append("WHERE space_key = ? ");
 		sql.append("AND task_no = ?");
-
+		pstmt = conn.prepareStatement(sql.toString());
 		int paramIdx = 1;
-		if (updateDescribe != null && !updateDescribe.isBlank()) {
-			pstmt.setString(paramIdx++, updateDescribe);
+		if (updateDescription != null && !updateDescription.isBlank()) {
+			pstmt.setString(paramIdx++, updateDescription);
 		}
 
 		if (updateTitle != null && !updateTitle.isBlank()) {
@@ -291,9 +292,60 @@ public class TaskDao {
 	}
 
 	// Update Task Order
-	boolean updateTaskOrder(int selectedTaskNo) {
-		// input으로 어떤게 주어지는걸까?
-		return true;
+	boolean updateTaskOrder(int selectedTaskNo, int beforeMovedTaskNo, int afterMovedTaskNo, int statusNo, String currentSpaceKey)
+			throws Exception {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		int chk1 = 0;
+		int chk2 = 0;
+		int chk3 = 0;
+		boolean isMoved = false;
+
+		Class.forName(driver);
+		conn = DriverManager.getConnection(url, dbId, dbPw);
+
+		String sql = "UPDATE task " + "SET task_order = task_order + 1 " + "WHERE status_no = ? "
+				+ "AND task_order >= ? " + "AND task_order < ? " + "AND ? > ? AND space_key = ? ";
+
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, statusNo);
+		pstmt.setInt(2, beforeMovedTaskNo);
+		pstmt.setInt(3, afterMovedTaskNo);
+		pstmt.setInt(4, beforeMovedTaskNo);
+		pstmt.setInt(5, afterMovedTaskNo);
+		pstmt.setString(6, currentSpaceKey);
+		chk1 = pstmt.executeUpdate();
+		pstmt.close();
+
+		sql = "UPDATE task " + " SET task_order = task_order - 1 " + " WHERE status_no = ? "
+				+ " AND task_order <= ? " + " AND task_order > ? " + " AND ? < ? AND space_key = ?";
+
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, statusNo);
+		pstmt.setInt(2, afterMovedTaskNo);
+		pstmt.setInt(3, beforeMovedTaskNo);
+		pstmt.setInt(4, beforeMovedTaskNo);
+		pstmt.setInt(5, afterMovedTaskNo);
+		pstmt.setString(6, currentSpaceKey);
+		chk2 = pstmt.executeUpdate();
+		pstmt.close();
+
+		sql = "UPDATE task" + " SET task_order = ? " + " WHERE task_no = ? AND space_key = ? ";
+
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, afterMovedTaskNo);
+		pstmt.setInt(2, selectedTaskNo);
+		pstmt.setString(3, currentSpaceKey);
+		chk3 = pstmt.executeUpdate();
+		pstmt.close();
+
+		if (chk1 != 0 && chk2 != 0 && chk3 != 0) {
+			isMoved = true;
+		}
+
+		conn.close();
+
+		return isMoved;
 	}
 
 	// 명세 4.4
@@ -336,10 +388,8 @@ public class TaskDao {
 
 		String sql = "SELECT space_key, task_no, creator_no, worker_no, task_title, "
 				+ "    task_description, due_date, label_title, status_no, priority, "
-				+ "    upper_task_no, task_order, summary " 
-				+ "	  FROM task " 
-				+ "   WHERE space_key = ? "
-				+ "	  ORDER BY task_no ASC ";
+				+ "    upper_task_no, task_order, summary " + "	  FROM task " + "   WHERE space_key = ? "
+				+ "	  ORDER BY task_order ASC ";
 		pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, currentSpaceKey);
 
@@ -370,7 +420,7 @@ public class TaskDao {
 
 		return list;
 	}
-	
+
 	// 명세 4.7
 	// Input : current_space_key, selected_task_no
 	// Output : List<TaskInfoDto>
@@ -379,16 +429,14 @@ public class TaskDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		List<TaskInfoDto> list = new ArrayList<>();
-		
+
 		Class.forName(driver);
 		conn = DriverManager.getConnection(url, dbId, dbPw);
-		
+
 		String sql = "SELECT space_key, task_no, creator_no, worker_no, task_title, "
 				+ "    task_description, due_date, label_title, status_no, priority, "
-				+ "    upper_task_no, task_order, summary " 
-				+ "	  FROM task " 
-				+ "   WHERE space_key = ? AND upper_task_no IS NULL "
-				+ "	  ORDER BY task_no ASC ";
+				+ "    upper_task_no, task_order, summary " + "	  FROM task "
+				+ "   WHERE space_key = ? AND upper_task_no IS NULL " + "	  ORDER BY task_order ASC ";
 		pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, currentSpaceKey);
 		rs = pstmt.executeQuery();
@@ -411,32 +459,30 @@ public class TaskDao {
 					.build();
 			list.add(dto);
 		}
-		
+
 		rs.close();
 		pstmt.close();
 		conn.close();
-		
+
 		return list;
 	}
-	
+
 	// 명세 4.8
-	// Input : 
-	// Output : 
-	List<TaskInfoDto> shotLowerTaskList(String currentSpaceKey, int selectedTaskNo) throws Exception {
+	// Input :
+	// Output :
+	List<TaskInfoDto> showLowerTaskList(String currentSpaceKey, int selectedTaskNo) throws Exception {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		List<TaskInfoDto> list = new ArrayList<>();
-		
+
 		Class.forName(driver);
 		conn = DriverManager.getConnection(url, dbId, dbPw);
-		
+
 		String sql = "SELECT space_key, task_no, creator_no, worker_no, task_title, "
 				+ "    task_description, due_date, label_title, status_no, priority, "
-				+ "    upper_task_no, task_order, summary " 
-				+ "	  FROM task " 
-				+ "   WHERE space_key = ? AND upper_task_no = ? "
-				+ "   ORDER BY task_no ASC ";
+				+ "    upper_task_no, task_order, summary " + "	  FROM task "
+				+ "   WHERE space_key = ? AND upper_task_no = ? " + "   ORDER BY task_order ASC ";
 		pstmt = conn.prepareStatement(sql);
 		pstmt.setString(1, currentSpaceKey);
 		pstmt.setInt(2, selectedTaskNo);
@@ -460,21 +506,138 @@ public class TaskDao {
 					.build();
 			list.add(dto);
 		}
-		
+
 		rs.close();
 		pstmt.close();
 		conn.close();
-		
+
 		return list;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		TaskDao dao = new TaskDao();
 
 		// 4.1 Create Task (clear!)
-//		System.out.println(dao.createTask("ABCD", 2, 5, "담배피러가기", "2개 피우기", "2026-06-02", null, 1, "medium", null, 2, null));
+//		System.out.println(dao.createTask("ABCD", 2, 5, "집가기", "지하철타고 가기", "2026-06-06", null, 1, "Low", null, null));
 
-		// 4.2 Search Task By SearchCondition
-
+		// 4.2 Search Task By SearchCondition (clear!)
+//		List<TaskInfoDto> filteredTask = dao.SearchTaskBySearchCondition(2, "담배", null, 2, null, null, null, "20260602", "!=");
+//		if(filteredTask.isEmpty()) {
+//			System.out.println("No Task Here...");
+//		}
+//		else {
+//			for (TaskInfoDto dto : filteredTask) {
+//				String spaceKey = dto.getSpaceKey();
+//				int taskNo = dto.getTaskNo();
+//				int creatorNo = dto.getCreatorNo();
+//				int workerNo = dto.getWorkerNo();
+//				String taskTitle = dto.getTaskTitle();
+//				String taskDescription = dto.getTaskDescription();
+//				String dueDate = dto.getDueDate();
+//				String labelTitle = dto.getLabelTitle();
+//				String statusNo = dto.getStatusNo();
+//				String priority = dto.getPriority();
+//				Integer upperTaskNo = dto.getUpperTaskNo();
+//				int taskOrder = dto.getTaskOrder();
+//				int imageNo = dto.getImageNo();
+//				String summary = dto.getSummary();
+//				System.out.println(spaceKey + ", " + taskNo + ", " + creatorNo 
+//									+ ", " + workerNo + ", " + taskTitle + ", " + taskDescription + ", " + dueDate 
+//									+ ", " + labelTitle + ", " + statusNo + ", " + priority + ", " + upperTaskNo 
+//									+ ", " + taskOrder + ", " + imageNo + ", " + summary);
+//				}
+		// 4.3 Update Task
+		// Update Task (clear!)
+//		System.out.println(dao.updateTask("ABCD", 9, "수정된 제목", "수정된 내용", null, null, null, null, null));
+		
+		// Update Task Order (fail!)
+//		System.out.println(dao.updateTaskOrder(3, 1, 2, 1, "ABCD"));
+		
+		// 4.4 Delete Task (clear!)
+//		System.out.println(dao.deleteTask("ABCD", 9));
+		
+		// 4.6 Show Task List (clear!)
+//		List<TaskInfoDto> list = dao.showTaskList("ABCD");
+//		if(list.isEmpty()) {
+//			System.out.println("No Task Yet...");
+//		}
+//		else {
+//			for(TaskInfoDto dto : list) {
+//				String spaceKey = dto.getSpaceKey();
+//				int taskNo = dto.getTaskNo();
+//				int creatorNo = dto.getCreatorNo();
+//				int workerNo = dto.getWorkerNo();
+//				String taskTitle = dto.getTaskTitle();
+//				String taskDescription = dto.getTaskDescription();
+//				String dueDate = dto.getDueDate();
+//				String labelTitle = dto.getLabelTitle();
+//				String statusNo = dto.getStatusNo();
+//				String priority = dto.getPriority();
+//				Integer upperTaskNo = dto.getUpperTaskNo();
+//				int taskOrder = dto.getTaskOrder();
+//				int imageNo = dto.getImageNo();
+//				String summary = dto.getSummary();
+//				System.out.println(spaceKey + ", " + taskNo + ", " + creatorNo 
+//									+ ", " + workerNo + ", " + taskTitle + ", " + taskDescription + ", " + dueDate 
+//									+ ", " + labelTitle + ", " + statusNo + ", " + priority + ", " + upperTaskNo 
+//									+ ", " + taskOrder + ", " + imageNo + ", " + summary);
+//			}
+//		}
+		
+		// 4.7 Show Upper Task Only (clear!)
+//		List<TaskInfoDto> list = dao.showUpperTaskList("ABCD");
+//		if(list.isEmpty()) {
+//			System.out.println("No Task Yet...");
+//		}
+//		else {
+//			for(TaskInfoDto dto : list) {
+//				String spaceKey = dto.getSpaceKey();
+//				int taskNo = dto.getTaskNo();
+//				int creatorNo = dto.getCreatorNo();
+//				int workerNo = dto.getWorkerNo();
+//				String taskTitle = dto.getTaskTitle();
+//				String taskDescription = dto.getTaskDescription();
+//				String dueDate = dto.getDueDate();
+//				String labelTitle = dto.getLabelTitle();
+//				String statusNo = dto.getStatusNo();
+//				String priority = dto.getPriority();
+//				Integer upperTaskNo = dto.getUpperTaskNo();
+//				int taskOrder = dto.getTaskOrder();
+//				int imageNo = dto.getImageNo();
+//				String summary = dto.getSummary();
+//				System.out.println(spaceKey + ", " + taskNo + ", " + creatorNo 
+//									+ ", " + workerNo + ", " + taskTitle + ", " + taskDescription + ", " + dueDate 
+//									+ ", " + labelTitle + ", " + statusNo + ", " + priority + ", " + upperTaskNo 
+//									+ ", " + taskOrder + ", " + imageNo + ", " + summary);
+//			}
+//		}
+		
+		// 4.8 Show Lower Task List (clear!)
+//		List<TaskInfoDto> list = dao.showLowerTaskList("ABCD", 7);
+//		if(list.isEmpty()) {
+//			System.out.println("No Task Yet...");
+//		}
+//		else {
+//			for(TaskInfoDto dto : list) {
+//				String spaceKey = dto.getSpaceKey();
+//				int taskNo = dto.getTaskNo();
+//				int creatorNo = dto.getCreatorNo();
+//				int workerNo = dto.getWorkerNo();
+//				String taskTitle = dto.getTaskTitle();
+//				String taskDescription = dto.getTaskDescription();
+//				String dueDate = dto.getDueDate();
+//				String labelTitle = dto.getLabelTitle();
+//				String statusNo = dto.getStatusNo();
+//				String priority = dto.getPriority();
+//				Integer upperTaskNo = dto.getUpperTaskNo();
+//				int taskOrder = dto.getTaskOrder();
+//				int imageNo = dto.getImageNo();
+//				String summary = dto.getSummary();
+//				System.out.println(spaceKey + ", " + taskNo + ", " + creatorNo 
+//									+ ", " + workerNo + ", " + taskTitle + ", " + taskDescription + ", " + dueDate 
+//									+ ", " + labelTitle + ", " + statusNo + ", " + priority + ", " + upperTaskNo 
+//									+ ", " + taskOrder + ", " + imageNo + ", " + summary);
+//			}
+//		}
 	}
 }
