@@ -8,9 +8,8 @@ public class ReplyListDto {
 	private String reply_content;
 	private int image_no;
 	private String created_at;
-	private String task_id;
 	
-	ReplyListDto(int reply_no, String space_key, int task_no, int writer_no, String reply_content, int image_no, String created_at, String task_id) {
+	ReplyListDto(int reply_no, String space_key, int task_no, int writer_no, String reply_content, int image_no, String created_at) {
 		this.reply_no = reply_no;
 		this.space_key = space_key;
 		this.task_no = task_no;
@@ -18,7 +17,6 @@ public class ReplyListDto {
 		this.reply_content = reply_content;
 		this.image_no = image_no;
 		this.created_at = created_at;
-		this.task_id = task_id;
 	}
 	
 	public int getReplyNo() {
@@ -89,22 +87,12 @@ public class ReplyListDto {
 	public void setCreatedAt(String created_at) {
 		this.created_at = created_at;
 	}
-
-
-	public String getTaskId() {
-		return task_id;
-	}
-
-
-	public void setTaskId(String task_id) {
-		this.task_id = task_id;
-	}
 	
 	ReplyListDto(){}
 	
 	@Override
 	public String toString() {
-		return "ReplyListDto [reply_no = "+ reply_no +", space_key = "+ space_key +", task_no = "+ task_no +", writer_no = "+ writer_no +", reply_content = "+ reply_content + ", image_no = "+ image_no +", created_at = "+ created_at +", task_id = "+ task_id + "]";
+		return "ReplyListDto [reply_no = "+ reply_no +", space_key = "+ space_key +", task_no = "+ task_no +", writer_no = "+ writer_no +", reply_content = "+ reply_content + ", image_no = "+ image_no +", created_at = "+ created_at + "]";
 	}														
 
 	public static void main(String[] args) {

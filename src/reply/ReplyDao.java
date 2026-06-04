@@ -14,7 +14,7 @@ public class ReplyDao {
 	// output : -
 	// reply_content, image_no : 유저입력
 	// created_at : SYSDATE
-	// space_key, task_no, writer_no, task_id : current값
+	// space_key, task_no, writer_no : current값
 	boolean WriteReply(String space_key, int task_no, int writer_no, String reply_content, int image_no) {
 		boolean isWrited = false;
 		String driver = "oracle.jdbc.driver.OracleDriver";
@@ -22,7 +22,7 @@ public class ReplyDao {
 		String dbId = "jira";
 		String dbPw = "1234";
 
-		String sql = "INSERT INTO reply(reply_no, space_key, task_no, writer_no, reply_content, image_no, created_at, task_id) VALUES (seq_reply_no.nextVal, ?, ?, ?, ?, ?, SYSDATE, ?)";
+		String sql = "INSERT INTO reply(reply_no, space_key, task_no, writer_no, reply_content, image_no, created_at) VALUES (seq_reply_no.nextVal, ?, ?, ?, ?, ?, SYSDATE)";
 
 		try {
 			Class.forName(driver);
@@ -38,7 +38,6 @@ public class ReplyDao {
 			pstmt.setInt(3, writer_no);
 			pstmt.setString(4, reply_content);
 			pstmt.setInt(5, image_no);
-			pstmt.setString(6, space_key + "-" + task_no);
 			int result = pstmt.executeUpdate();
 
 			if (result > 0) {
@@ -66,7 +65,7 @@ public class ReplyDao {
 		String dbId = "jira";
 		String dbPw = "1234";
 
-		String sql = "UPDATE reply SET reply_content = ?, image_no = ? " + "WHERE writer_no = ?" + "AND reply_no = ?) ";
+		String sql = "UPDATE reply SET reply_content = ?, image_no = ? " + "WHERE writer_no = ? " + "AND reply_no = ? ";
 
 		try {
 			Class.forName(driver);
@@ -142,7 +141,7 @@ public class ReplyDao {
 		String dbId = "jira";
 		String dbPw = "1234";
 
-		String sql = "SELECT reply_no, space_key, task_no, writer_no, reply_content, image_no, created_at, task_id "
+		String sql = "SELECT reply_no, writer_no, reply_content, image_no, created_at "
 				+ "FROM reply WHERE space_key = ? AND task_no = ? " + "ORDER BY created_at DESC";
 
 		try {
@@ -152,23 +151,24 @@ public class ReplyDao {
 		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
-				PreparedStatement pstmt = conn.prepareStatement(sql);
-				ResultSet rs = pstmt.executeQuery()) {
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 			pstmt.setString(1, space_key);
 			pstmt.setInt(2, task_no);
 
-			while (rs.next()) {
-				ReplyListDto dto = new ReplyListDto();
-				dto.setReplyNo(rs.getInt("reply_no"));
-				dto.setWriterNo(rs.getInt("writer_no"));
-				dto.setReplyContent(rs.getString("reply_content"));
-				dto.setImageNo(rs.getInt("image_no"));
-				dto.setCreatedAt(rs.getString("created_at"));
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					ReplyListDto dto = new ReplyListDto();
+					dto.setReplyNo(rs.getInt("reply_no"));
+					dto.setWriterNo(rs.getInt("writer_no"));
+					dto.setReplyContent(rs.getString("reply_content"));
+					dto.setImageNo(rs.getInt("image_no"));
+					dto.setCreatedAt(rs.getString("created_at"));
 
-				list.add(dto);
+					list.add(dto);
+				}
+
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -177,6 +177,14 @@ public class ReplyDao {
 	}
 
 	public static void main(String[] args) {
-
+		ReplyDao dao = new ReplyDao();
+		// 2.1 Write Reply(clear!)
+		// System.out.println(dao.WriteReply("ABCD", 1, 1, "replycontent1", 3));
+		// 2.2 Update Reply(clear!)
+		// System.out.println(dao.UpdateReply(1, 1, "newcontent1", 2));
+		// 2.3 Delete Reply(clear!)
+		// System.out.println(dao.DeleteReply(1, 1));
+		// 2.4 Show Reply List(clear!)
+		// System.out.println(dao.ShowReplyList("ABCD", 1));
 	}
 }
