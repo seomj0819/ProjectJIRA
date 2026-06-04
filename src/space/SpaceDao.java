@@ -164,19 +164,18 @@ public class SpaceDao {
 		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
-				PreparedStatement pstmt = conn.prepareStatement(sql);
-				ResultSet rs = pstmt.executeQuery()) {
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, user_no);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					SpaceListDto dto = new SpaceListDto();
+					dto.setSpaceKey(rs.getString("space_key"));
+					dto.setSpaceTitle(rs.getString("space_title"));
+					dto.setImageNo(rs.getInt("image_no"));
 
-			while (rs.next()) {
-				SpaceListDto dto = new SpaceListDto();
-				dto.setSpaceKey(rs.getString("space_key"));
-				dto.setSpaceTitle(rs.getString("space_title"));
-				dto.setImageNo(rs.getInt("image_no"));
-
-				list.add(dto);
+					list.add(dto);
+				}
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -217,7 +216,7 @@ public class SpaceDao {
 				dto.setImageNo(rs.getInt("image_no"));
 			}
 
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
