@@ -275,7 +275,7 @@ public class UsersDao {
 		String sql = "SELECT user_no " + "FROM users "
 				+ "WHERE user_no = ? AND verification_code = ? AND expire_date > SYSDATE";
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, userNo);
 			pstmt.setString(2, inputCode);
 			try (ResultSet rs = pstmt.executeQuery()) {
@@ -318,8 +318,8 @@ public class UsersDao {
 //		System.out.println(dao.changePw("abc@abc.com", null, null));
 
 		// 1.8 Get User Profile (clear!)
-		UserProfileDto dto = dao.getUserProfile(2);
-		System.out.println(dto);
+//		UserProfileDto dto = dao.getUserProfile(2);
+//		System.out.println(dto);
 
 		// 1.10 Email Check (clear!)
 //		if(dao.emailCheck("seomj081923@gmail.com")) {
