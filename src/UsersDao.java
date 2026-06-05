@@ -18,28 +18,32 @@ public class UsersDao {
 	// email : 유저 이메일
 	// pw : 유저 비밀번호
 	// 로그인 성공 시 user_no 반환, 실패시 0 반환
+	// 비밃런호를 암호화 해서 저장해야 할 수도?
 	int checkLocalLogin(String email, String pw) throws Exception {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		int userNo = 0;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-		String sql = "SELECT user_no " + "FROM users " + "WHERE email = ? AND pw = ?";
-
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, email);
-		pstmt.setString(2, pw);
-		rs = pstmt.executeQuery();
-
-		if (rs.next()) {
-			userNo = rs.getInt("user_no");
+		try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbId, dbPw);
+			String sql = "SELECT user_no " + "FROM users " + "WHERE email = ? AND pw = ?";
+	
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, email);
+			pstmt.setString(2, pw);
+			rs = pstmt.executeQuery();
+	
+			if (rs.next()) {
+				userNo = rs.getInt("user_no");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {if(rs != null) rs.close();} catch (Exception e) {e.printStackTrace();} 
+			try {if(pstmt != null) pstmt.close();} catch (Exception e) {e.printStackTrace();}
+			try {if(conn != null) conn.close();} catch (Exception e) {e.printStackTrace();}
 		}
-
-		rs.close();
-		pstmt.close();
-		conn.close();
 		return userNo;
 	}
 
@@ -54,25 +58,27 @@ public class UsersDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		int userNo = 0;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		String sql = "SELECT user_no " + "FROM users " + "WHERE email=? AND google_api =?";
-
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, email);
-		pstmt.setString(2, googleApi);
-		rs = pstmt.executeQuery();
-
-		if (rs.next()) {
-			userNo = rs.getInt("user_no");
+			try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbId, dbPw);
+	
+			String sql = "SELECT user_no " + "FROM users " + "WHERE email=? AND google_api =?";
+	
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, email);
+			pstmt.setString(2, googleApi);
+			rs = pstmt.executeQuery();
+	
+			if (rs.next()) {
+				userNo = rs.getInt("user_no");
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {if(rs != null) rs.close();} catch (Exception e) {e.printStackTrace();} 
+			try {if(pstmt != null) pstmt.close();} catch (Exception e) {e.printStackTrace();}
+			try {if(conn != null) conn.close();} catch (Exception e) {e.printStackTrace();}
 		}
-
-		rs.close();
-		pstmt.close();
-		conn.close();
-
 		return userNo;
 	}
 
@@ -86,25 +92,28 @@ public class UsersDao {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		boolean isRegister = false;
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		String sql = "INSERT INTO users(user_no, email, pw, user_name, image_no, verification_code, expire_date) "
-				+ "VALUES (seq_user_no.nextVal, ?, ?, ?, 1, null, null)";
-
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, email);
-		pstmt.setString(2, pw);
-		pstmt.setString(3, user_name);
-		int result = pstmt.executeUpdate();
-
-		if (result > 0) {
-			isRegister = true;
+		try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbId, dbPw);
+	
+			String sql = "INSERT INTO users(user_no, email, pw, user_name, image_no, verification_code, expire_date) "
+					+ "VALUES (seq_user_no.nextVal, ?, ?, ?, 1, null, null)";
+	
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, email);
+			pstmt.setString(2, pw);
+			pstmt.setString(3, user_name);
+			int result = pstmt.executeUpdate();
+	
+			if (result > 0) {
+				isRegister = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {if(pstmt != null) pstmt.close();} catch (Exception e) {e.printStackTrace();}
+			try {if(conn != null) conn.close();} catch (Exception e) {e.printStackTrace();}
 		}
-
-		pstmt.close();
-		conn.close();
-
 		return isRegister;
 	}
 
@@ -118,26 +127,28 @@ public class UsersDao {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		boolean isRegister = false;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		String sql = "INSERT INTO users(user_no, email, google_api, user_name, image_no, verification_code, expire_date) "
-				+ "VALUES (seq_user_no.nextVal, ?, ?, ?, 1, null, null)";
-
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, email);
-		pstmt.setString(2, google_api);
-		pstmt.setString(3, user_name);
-		int result = pstmt.executeUpdate();
-
-		if (result > 0) {
-			isRegister = true;
+		try{
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbId, dbPw);
+	
+			String sql = "INSERT INTO users(user_no, email, google_api, user_name, image_no, verification_code, expire_date) "
+					+ "VALUES (seq_user_no.nextVal, ?, ?, ?, 1, null, null)";
+	
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, email);
+			pstmt.setString(2, google_api);
+			pstmt.setString(3, user_name);
+			int result = pstmt.executeUpdate();
+	
+			if (result > 0) {
+				isRegister = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {if(pstmt != null) pstmt.close();} catch (Exception e) {e.printStackTrace();}
+			try {if(conn != null) conn.close();} catch (Exception e) {e.printStackTrace();}
 		}
-
-		pstmt.close();
-		conn.close();
-
 		return isRegister;
 	}
 
@@ -151,25 +162,28 @@ public class UsersDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String pw = null;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		String sql = "SELECT pw FROM users WHERE email = ?";
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, email);
-		rs = pstmt.executeQuery();
-
-		if (rs.next()) {
-			pw = rs.getString("pw");
-		} else {
-			System.out.println("등록되지 않은 이메일 입니다.");
+		
+		try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbId, dbPw);
+	
+			String sql = "SELECT pw FROM users WHERE email = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, email);
+			rs = pstmt.executeQuery();
+	
+			if (rs.next()) {
+				pw = rs.getString("pw");
+			} else {
+				System.out.println("등록되지 않은 이메일 입니다.");
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {if(rs != null) rs.close();} catch (Exception e) {e.printStackTrace();} 
+			try {if(pstmt != null) pstmt.close();} catch (Exception e) {e.printStackTrace();}
+			try {if(conn != null) conn.close();} catch (Exception e) {e.printStackTrace();}
 		}
-
-		rs.close();
-		pstmt.close();
-		conn.close();
-
 		return pw;
 	}
 
@@ -183,25 +197,27 @@ public class UsersDao {
 		PreparedStatement pstmt = null;
 		boolean isDelete = false;
 		int result = 0;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		String sql = "DELETE FROM users "
-				+ "WHERE email = ? AND pw = ? AND verification_code = ? AND expire_date > SYSDATE";
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, email);
-		pstmt.setString(2, pw);
-		pstmt.setString(3, inputCode);
-		result = pstmt.executeUpdate();
-
-		if (result > 0) {
-			isDelete = true;
+		try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbId, dbPw);
+	
+			String sql = "DELETE FROM users "
+					+ "WHERE email = ? AND pw = ? AND verification_code = ? AND expire_date > SYSDATE";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, email);
+			pstmt.setString(2, pw);
+			pstmt.setString(3, inputCode);
+			result = pstmt.executeUpdate();
+	
+			if (result > 0) {
+				isDelete = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {if(pstmt != null) pstmt.close();} catch (Exception e) {e.printStackTrace();}
+			try {if(conn != null) conn.close();} catch (Exception e) {e.printStackTrace();}
 		}
-
-		pstmt.close();
-		conn.close();
-
 		return isDelete;
 	}
 
@@ -215,25 +231,27 @@ public class UsersDao {
 		PreparedStatement pstmt = null;
 		boolean isChanged = false;
 		int result = 0;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		String sql = "UPDATE users " + "SET pw = ? "
-				+ "WHERE email = ? AND verification_code = ? AND expire_date > SYSDATE";
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, pw);
-		pstmt.setString(2, email);
-		pstmt.setString(3, inputCode);
-		result = pstmt.executeUpdate();
-
-		if (result > 0) {
-			isChanged = true;
+		try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbId, dbPw);
+	
+			String sql = "UPDATE users " + "SET pw = ? "
+					+ "WHERE email = ? AND verification_code = ? AND expire_date > SYSDATE";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, pw);
+			pstmt.setString(2, email);
+			pstmt.setString(3, inputCode);
+			result = pstmt.executeUpdate();
+	
+			if (result > 0) {
+				isChanged = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {if(pstmt != null) pstmt.close();} catch (Exception e) {e.printStackTrace();}
+			try {if(conn != null) conn.close();} catch (Exception e) {e.printStackTrace();}
 		}
-
-		pstmt.close();
-		conn.close();
-
 		return isChanged;
 	}
 
@@ -246,28 +264,30 @@ public class UsersDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		UserProfileDto dto = null;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		String sql = "SELECT u.user_no, u.user_name, u.email, i.image_title " + "	FROM image i JOIN users u "
-				+ "	ON i.image_no = u.image_no " + "WHERE u.user_no = ?";
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setInt(1, userNo);
-		rs = pstmt.executeQuery();
-
-		if (rs.next()) {
-			dto = new UserProfileDto();
-			dto.setUserNo(rs.getInt("user_no"));
-			dto.setUserName(rs.getString("user_name"));
-			dto.setEmail(rs.getString("email"));
-			dto.setImageTitle(rs.getString("image_title"));
+		try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbId, dbPw);
+	
+			String sql = "SELECT u.user_no, u.user_name, u.email, i.image_title " + "	FROM image i JOIN users u "
+					+ "	ON i.image_no = u.image_no " + "WHERE u.user_no = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, userNo);
+			rs = pstmt.executeQuery();
+	
+			if (rs.next()) {
+				dto = new UserProfileDto();
+				dto.setUserNo(rs.getInt("user_no"));
+				dto.setUserName(rs.getString("user_name"));
+				dto.setEmail(rs.getString("email"));
+				dto.setImageTitle(rs.getString("image_title"));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {if(rs != null) rs.close();} catch (Exception e) {e.printStackTrace();} 
+			try {if(pstmt != null) pstmt.close();} catch (Exception e) {e.printStackTrace();}
+			try {if(conn != null) conn.close();} catch (Exception e) {e.printStackTrace();}
 		}
-
-		rs.close();
-		pstmt.close();
-		conn.close();
-
 		return dto;
 	}
 
@@ -283,23 +303,25 @@ public class UsersDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		boolean isExist = false;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		String sql = "SELECT email FROM users WHERE email = ?";
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, email);
-		rs = pstmt.executeQuery();
-
-		if (rs.next()) {
-			isExist = true;
+		try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbId, dbPw);
+	
+			String sql = "SELECT email FROM users WHERE email = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, email);
+			rs = pstmt.executeQuery();
+	
+			if (rs.next()) {
+				isExist = true;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {if(rs != null) rs.close();} catch (Exception e) {e.printStackTrace();} 
+			try {if(pstmt != null) pstmt.close();} catch (Exception e) {e.printStackTrace();}
+			try {if(conn != null) conn.close();} catch (Exception e) {e.printStackTrace();}
 		}
-
-		rs.close();
-		pstmt.close();
-		conn.close();
-
 		return isExist;
 	}
 
@@ -312,24 +334,25 @@ public class UsersDao {
 	String createVerificationCode(String email) throws Exception {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
 		// Create Code
 		String verificationCode = RandomCodeUtil.generateRandomCode();
-
-		// Update Code
-		String sql = "UPDATE users " + "SET verification_code = ?, " + "expire_date = SYSDATE + (1/24/60 * 10) "
-				+ "WHERE email = ?";
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setString(1, verificationCode);
-		pstmt.setString(2, email);
-		pstmt.executeUpdate();
-
-		pstmt.close();
-		conn.close();
-
+		try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbId, dbPw);
+	
+			// Update Code
+			String sql = "UPDATE users " + "SET verification_code = ?, " + "expire_date = SYSDATE + (1/24/60 * 10) "
+					+ "WHERE email = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, verificationCode);
+			pstmt.setString(2, email);
+			pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {if(pstmt != null) pstmt.close();} catch (Exception e) {e.printStackTrace();}
+			try {if(conn != null) conn.close();} catch (Exception e) {e.printStackTrace();}
+		}
 		return verificationCode;
 	}
 
@@ -339,26 +362,28 @@ public class UsersDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		boolean verification = false;
-
-		Class.forName(driver);
-		conn = DriverManager.getConnection(url, dbId, dbPw);
-
-		// Check Code
-		String sql = "SELECT user_no " + "FROM users "
-				+ "WHERE user_no = ? AND verification_code = ? AND expire_date > SYSDATE";
-		pstmt = conn.prepareStatement(sql);
-		pstmt.setInt(1, userNo);
-		pstmt.setString(2, inputCode);
-		rs = pstmt.executeQuery();
-
-		if (rs.next()) {
-			verification = true;
+		try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbId, dbPw);
+	
+			// Check Code
+			String sql = "SELECT user_no " + "FROM users "
+					+ "WHERE user_no = ? AND verification_code = ? AND expire_date > SYSDATE";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, userNo);
+			pstmt.setString(2, inputCode);
+			rs = pstmt.executeQuery();
+	
+			if (rs.next()) {
+				verification = true;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {if(rs != null) rs.close();} catch (Exception e) {e.printStackTrace();} 
+			try {if(pstmt != null) pstmt.close();} catch (Exception e) {e.printStackTrace();}
+			try {if(conn != null) conn.close();} catch (Exception e) {e.printStackTrace();}
 		}
-
-		rs.close();
-		pstmt.close();
-		conn.close();
-
 		return verification;
 	}
 
