@@ -46,11 +46,9 @@ public class StatusDto {
 	public void setStatusColor(String status_color) {
 		this.status_color = status_color;
 	}
-	
 	public String getColorCode() {
 		return color_code;
 	}
-
 	public void setColorCode(String color_code) {
 		this.color_code = color_code;
 	}

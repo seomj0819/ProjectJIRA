@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import space.SpaceListDto;
-
 public class StatusDao {
 	boolean CreateStatus(String space_key, int status_order, String status_title, String status_color) {
 		boolean isCreated = false;
@@ -218,10 +216,12 @@ public class StatusDao {
 		}
 		return isDeleted;
 	}
-		// 명세 13.5
-		// input : space_key
-		// output : StatusDto(status_no, status_title, status_color, color_code), totalCount
-		// space_key : 현재 스페이스키
+
+	// 명세 13.5
+	// input : space_key
+	// output : StatusDto(status_no, status_title, status_color, color_code),
+	// totalCount
+	// space_key : 현재 스페이스키
 	List<StatusDto> ShowStatus(String space_key) {
 		List<StatusDto> list = new ArrayList<>();
 		String driver = "oracle.jdbc.driver.OracleDriver";
@@ -229,8 +229,9 @@ public class StatusDao {
 		String dbId = "jira";
 		String dbPw = "1234";
 
-		String sql = "SELECT " + "s.status_no, " + "s.status_title, " + "s.status_color, " + "c.color_code " + "FROM status s " + "INNER JOIN color c "
-				+ "ON s.status_color = c.color_name " + "WHERE s.space_key = ? " + "ORDER BY s.status_order ASC";
+		String sql = "SELECT " + "s.status_no, " + "s.status_title, " + "s.status_color, " + "c.color_code "
+				+ "FROM status s " + "INNER JOIN color c " + "ON s.status_color = c.color_name "
+				+ "WHERE s.space_key = ? " + "ORDER BY s.status_order ASC";
 
 		try {
 			Class.forName(driver);
@@ -261,12 +262,20 @@ public class StatusDao {
 
 	public static void main(String[] args) {
 		StatusDao dao = new StatusDao();
-		
-		//13.5 ShowStatus(Clear!)
+
+		// 13.1 CreateStatus(Clear!)
+		System.out.println(dao.CreateStatus("ABCD", 2, "진행중", "red"));
+		// 13.2 UpdateStatus(Clear!)
+		System.out.println(dao.UpdateStatus(2, "하고잇느느 중", null));
+		// 13.3 ChangeOrder(Clear!)
+		System.out.println(dao.ChangeOrder(1, 1, 2));
+		// 13.4 DeleteStatus(Clear!)
+		System.out.println(dao.DeleteStatus(2, 1));
+		// 13.5 ShowStatus(Clear!)
 		List<StatusDto> list = dao.ShowStatus("ABCD");
 		System.out.println(list);
 		int totalCount = list.size();
 		System.out.println(totalCount);
-		
+
 	}
 }
