@@ -3,6 +3,7 @@ package alarnchk;
 public class AlarmChkDto {
 	private int history_no;
 	private int user_no;
+	private int count;
 
 	AlarmChkDto(int history_no, int user_no) {
 		this.setHistory_no(history_no);
@@ -23,6 +24,14 @@ public class AlarmChkDto {
 
 	public void setUser_no(int user_no) {
 		this.user_no = user_no;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
 	}
 
 	AlarmChkDto() {
