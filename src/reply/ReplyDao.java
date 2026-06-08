@@ -13,6 +13,7 @@ public class ReplyDao {
 	String url = "jdbc:oracle:thin:@localhost:1521:xe";
 	String dbId = "jira";
 	String dbPw = "1234";
+
 	// 명세 5.1
 	// input : space_key, task_no, writer_no, reply_content, image_no
 	// output : -
