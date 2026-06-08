@@ -11,7 +11,8 @@ public class AlarmChkDao {
 	String url = "jdbc:oracle:thin:@localhost:1521:xe";
 	String dbId = "jira";
 	String dbPw = "1234";
-	//명세 10.1
+
+	// 명세 10.1
 	// input : history_no, user_no
 	// output : -
 	boolean CreateAlarmCheck(int history_no, int user_no) {
@@ -36,7 +37,8 @@ public class AlarmChkDao {
 
 		return isCreated;
 	}
-	//명세 10.2
+
+	// 명세 10.2
 	// input : history_no, user_no
 	// output : -
 	boolean DeleteAlarmCheck(int history_no, int user_no) {
@@ -60,7 +62,8 @@ public class AlarmChkDao {
 
 		return isDeleted;
 	}
-	//명세 10.3
+
+	// 명세 10.3
 	// input : user_no
 	// output : AlarmChkDto
 	AlarmChkDto CountAlarmCheck(int user_no) {
@@ -86,13 +89,14 @@ public class AlarmChkDao {
 
 		return dto;
 	}
+
 	public static void main(String[] args) {
 		AlarmChkDao dao = new AlarmChkDao();
-		//10.1 Create Alarm Check(Clear!)
+		// 10.1 Create Alarm Check(Clear!)
 		System.out.println(dao.CreateAlarmCheck(1, 1));
-		//10.2 Delete Alarm Check(Clear!)
+		// 10.2 Delete Alarm Check(Clear!)
 		System.out.println(dao.DeleteAlarmCheck(1, 1));
-		//10.3 Count Alarm Check(Clear!)
+		// 10.3 Count Alarm Check(Clear!)
 		System.out.println(dao.CountAlarmCheck(1));
 	}
 }
