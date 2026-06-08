@@ -91,6 +91,7 @@ public class AlarmChkDao {
 	}
 
 	public static void main(String[] args) {
+		
 		AlarmChkDao dao = new AlarmChkDao();
 		// 10.1 Create Alarm Check(Clear!)
 		System.out.println(dao.CreateAlarmCheck(1, 1));
