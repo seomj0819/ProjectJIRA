@@ -341,5 +341,7 @@ public class SearchConditionDao {
 		
 		// 8.1 Create Search Condition (clear!)
 //		System.out.println(dao.createSearchCondition("나의 필터", null, 2, null, null, null, "ABCD", "20260604", "="));
+		
+		System.out.println(dao.deleteSearchCondition(1, 2, "owner"));
 	}
 }
