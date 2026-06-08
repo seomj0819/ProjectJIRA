@@ -9,23 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryDao {
+	String driver = "oracle.jdbc.driver.OracleDriver";
+	String url = "jdbc:oracle:thin:@localhost:1521:xe";
+	String dbId = "jira";
+	String dbPw = "1234";
 	//명세 9.1
 	// input : space_key, task_no, reply_no, user_no, field_name, action_type, old_value, new_value
 	// output : -
 	boolean CreateHistory(String space_key, int task_no, int reply_no, int user_no, String field_name, String action_type, String old_value, String new_value) {
 		boolean isCreated = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "INSERT INTO history(history_no, space_key, task_no, reply_no, user_no, field_name, action_type, created_at, old_value, new_value) VALUES (seq_history_no.nextVal, ?, ?, ?, ?, ?, ?, SYSDATE, ?, ?)";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -55,10 +49,6 @@ public class HistoryDao {
 	// output : List<HistoryDto>
 	List<HistoryDto> ShowHistory(int user_no) {
 		List<HistoryDto> list = new ArrayList<>();
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "SELECT history_no, space_key, task_no, reply_no, user_no, field_name, action_type, created_at, old_value, new_value "
 				+ "FROM history WHERE MONTHS_BETWEEN "
@@ -67,12 +57,6 @@ public class HistoryDao {
 				+ "FROM space_member "
 				+ "WHERE user_no = ?) "
 				+ "ORDER BY created_at DESC";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -108,22 +92,12 @@ public class HistoryDao {
 	// output : List<HistoryDto>
 	List<HistoryDto> ShowTaskHistory(String space_key, int task_no) {
 		List<HistoryDto> list = new ArrayList<>();
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "SELECT history_no, reply_no, user_no, "
 				+ "FROM history "
 				+ "WHERE space_key = ? "
 				+ "AND task_no = ? "
 				+ "ORDER BY history_no";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {

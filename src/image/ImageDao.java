@@ -6,20 +6,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class ImageDao {
+	String driver = "oracle.jdbc.driver.OracleDriver";
+	String url = "jdbc:oracle:thin:@localhost:1521:xe";
+	String dbId = "jira";
+	String dbPw = "1234";
 	boolean UploadImage(String image_title, String image_category) {
 		boolean isUploaded = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "INSERT INTO image(image_no, image_title, image_category) VALUES (seq_image_no.nextVal, ?, ?)";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -41,18 +35,8 @@ public class ImageDao {
 
 	boolean UpdateProfileImage(int user_no, String new_image_title) {
 		boolean isUpdated = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "UPDATE image SET image_title=? WHERE image_no=(SELECT image_no FROM users WHERE user_no=?)";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -76,19 +60,9 @@ public class ImageDao {
 		boolean isDeleted0 = false;
 		boolean isDeleted = false;
 		boolean Deleted = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
-
+		
 		String sql0 = "DELETE image_no FROM reply WHERE reply_no = ? AND writer_no = ?";
 		String sql = "DELETE FROM image WHERE image_no IN(SELECT image_no FROM reply WHERE reply_no = ? AND writer_no = ?)";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql0)) {
@@ -129,19 +103,9 @@ public class ImageDao {
 		boolean isDeleted0 = false;
 		boolean isDeleted = false;
 		boolean Deleted = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql0 = "DELETE image_no FROM task WHERE space_key = ? AND task_no = ? AND creator_no = ?";
 		String sql = "DELETE FROM image WHERE image_no IN(SELECT image_no FROM task WHERE space_key = ? AND task_no = ? AND creator_no =?)";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql0)) {
@@ -182,18 +146,8 @@ public class ImageDao {
 
 	boolean DeleteImageProfile(int quit_user_no) {
 		boolean isDeleted = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "DELETE FROM image WHERE image_no IN(SELECT iamge_no FROM users WHERE user_no = ?)";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {

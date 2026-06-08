@@ -7,21 +7,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AlarmChkDao {
+	String driver = "oracle.jdbc.driver.OracleDriver";
+	String url = "jdbc:oracle:thin:@localhost:1521:xe";
+	String dbId = "jira";
+	String dbPw = "1234";
 	//명세 10.1
 	// input : history_no, user_no
 	// output : -
 	boolean CreateAlarmCheck(int history_no, int user_no) {
 		boolean isCreated = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		String sql = "INSERT INTO alarmchk(history_no, user_no) VALUES (?, ?)";
 
@@ -47,18 +41,8 @@ public class AlarmChkDao {
 	// output : -
 	boolean DeleteAlarmCheck(int history_no, int user_no) {
 		boolean isDeleted = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "DELETE FROM alarmchk " + "WHERE history_no = ? " + "AND user_no = ?";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -81,18 +65,8 @@ public class AlarmChkDao {
 	// output : AlarmChkDto
 	AlarmChkDto CountAlarmCheck(int user_no) {
 		AlarmChkDto dto = null;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "SELECT COUNT(*) AS cnt FROM alarmchk WHERE user_no = ?";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {

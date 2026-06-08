@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpaceDao {
+	String driver = "oracle.jdbc.driver.OracleDriver";
+	String url = "jdbc:oracle:thin:@localhost:1521:xe";
+	String dbId = "jira";
+	String dbPw = "1234";
 	// 명세 2.1
 	// input : space_key, space_title, space_status, image_no
 	// output : -
@@ -17,16 +21,6 @@ public class SpaceDao {
 	// image_no : default 디폴트 스페이스 이미지 번호(1)
 	boolean CreateSpace(String space_key, String space_title, String space_status) {
 		boolean isCreated = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		String sql = "INSERT INTO space(space_key, space_title, space_order, space_status, image_no) VALUES (?, ?, seq_space_order.nextVal, ?, 1)";
 
@@ -59,20 +53,9 @@ public class SpaceDao {
 		boolean isDeleted0 = false;
 		boolean isDeleted = false;
 
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
-
 		String sql0 = "DELETE FROM space_members " + "WHERE space_key = ? " + "AND space_key IN ( "
 				+ "SELECT space_key FROM space_members " + "WHERE user_role = '관리자' " + "AND user_no = ? " + ")";
 		String sql = "DELETE FROM space " + "WHERE space_key = ? ";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt0 = conn.prepareStatement(sql0);
@@ -111,19 +94,9 @@ public class SpaceDao {
 	// 테이블에 트리거 적용
 	boolean UpdateSpace(String space_key, String new_space_title, String new_space_key, int user_no) {
 		boolean isUpdated = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "UPDATE space SET space_title = ?, space_key = ? " + "WHERE space_key IN (" + "SELECT space_key "
 				+ "FROM space_members " + "WHERE user_role = '관리자' " + "AND user_no = ?) " + "AND space_key = ?";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -150,18 +123,8 @@ public class SpaceDao {
 	// user_no : 현재 유저번호
 	List<SpaceListDto> ShowSpaceList(int user_no) {
 		List<SpaceListDto> list = new ArrayList<>();
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "SELECT sm.space_key, space_title, image_no FROM space_members sm INNER JOIN space s ON sm.space_key = s.space_key WHERE sm.user_no = ? ORDER BY space_order";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -189,18 +152,8 @@ public class SpaceDao {
 	// space_key : 현재 스페이스키
 	SpaceListDto ShowSpaceProfile(String space_key) {
 		SpaceListDto dto = null;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "SELECT space_key, space_title, image_no FROM space WHERE space_key = ?";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {

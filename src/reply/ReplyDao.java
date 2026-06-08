@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReplyDao {
+	String driver = "oracle.jdbc.driver.OracleDriver";
+	String url = "jdbc:oracle:thin:@localhost:1521:xe";
+	String dbId = "jira";
+	String dbPw = "1234";
 	// 명세 5.1
 	// input : space_key, task_no, writer_no, reply_content, image_no
 	// output : -
@@ -17,18 +21,8 @@ public class ReplyDao {
 	// space_key, task_no, writer_no : current값
 	boolean WriteReply(String space_key, int task_no, int writer_no, String reply_content, int image_no) {
 		boolean isWrited = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "INSERT INTO reply(reply_no, space_key, task_no, writer_no, reply_content, image_no, created_at) VALUES (seq_reply_no.nextVal, ?, ?, ?, ?, ?, SYSDATE)";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -60,18 +54,8 @@ public class ReplyDao {
 	// new_image_no : 새로운 이미지 번호
 	boolean UpdateReply(int reply_no, int writer_no, String new_reply_content, int new_image_no) {
 		boolean isUpdated = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "UPDATE reply SET reply_content = ?, image_no = ? " + "WHERE writer_no = ? " + "AND reply_no = ? ";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -100,18 +84,8 @@ public class ReplyDao {
 	// writer_no : 작성자의 유저번호, 작성자만 삭제가능
 	boolean DeleteReply(int reply_no, int writer_no) {
 		boolean isDeleted = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "DELETE FROM reply " + "WHERE reply_no = ? " + "AND writer_no = ?";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -136,19 +110,9 @@ public class ReplyDao {
 	// space_key, task_no : 현재 스페이스, 테스크
 	List<ReplyListDto> ShowReplyList(String space_key, int task_no) {
 		List<ReplyListDto> list = new ArrayList<>();
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "SELECT reply_no, writer_no, reply_content, image_no, created_at "
 				+ "FROM reply WHERE space_key = ? AND task_no = ? " + "ORDER BY created_at DESC";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {

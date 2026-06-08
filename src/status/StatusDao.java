@@ -9,20 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StatusDao {
+	String driver = "oracle.jdbc.driver.OracleDriver";
+	String url = "jdbc:oracle:thin:@localhost:1521:xe";
+	String dbId = "jira";
+	String dbPw = "1234";
 	boolean CreateStatus(String space_key, int status_order, String status_title, String status_color) {
 		boolean isCreated = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "INSERT INTO status(status_no, space_key, status_order, status_title, status_color) VALUES (seq_status_no.nextVal, ?, ?, ?, ?)";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -46,18 +40,8 @@ public class StatusDao {
 
 	boolean UpdateStatus(int status_no, String new_status_title, String new_status_color) {
 		boolean isUpdated = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "UPDATE status SET status_title = ?, status_color = ? " + "WHERE status_no = ? ";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -83,21 +67,12 @@ public class StatusDao {
 		boolean isChangedDown = false;
 		boolean isChanged = false;
 		boolean OrderChanged = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "UPDATE status SET status_order = ? " + "WHERE status_no = ? ";
 		String sqlUp = "UPDATE status SET status_order = status_order + 1 "
 				+ "WHERE status_order >= ? AND status_order < ?";
 		String sqlDown = "UPDATE status SET status_order = status_order - 1 "
 				+ "WHERE status_order <= ? AND status_order > ?";
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sqlUp)) {
@@ -154,20 +129,10 @@ public class StatusDao {
 		boolean OrderUpdated = false;
 		boolean StatusDeleted = false;
 		boolean isDeleted = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "UPDATE task SET status = ? WHERE status = ?)";
 		String sql1 = "UPDATE status SET status_order = status_order - 1 WHERE status_order > (SELECT status_order FROM status WHERE status_no = ?)";
 		String sql2 = "DELETE FROM status WHERE status_no = ?";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -224,20 +189,10 @@ public class StatusDao {
 	// space_key : 현재 스페이스키
 	List<StatusDto> ShowStatus(String space_key) {
 		List<StatusDto> list = new ArrayList<>();
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "SELECT " + "s.status_no, " + "s.status_title, " + "s.status_color, " + "c.color_code "
 				+ "FROM status s " + "INNER JOIN color c " + "ON s.status_color = c.color_name "
 				+ "WHERE s.space_key = ? " + "ORDER BY s.status_order ASC";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {

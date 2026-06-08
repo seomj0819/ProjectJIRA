@@ -6,6 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class FilesDao {
+	String driver = "oracle.jdbc.driver.OracleDriver";
+	String url = "jdbc:oracle:thin:@localhost:1521:xe";
+	String dbId = "jira";
+	String dbPw = "1234";
 	//명세 11.1
 	// input : space_key, task_no, reply_no, file_name, file_path
 	// output : -
@@ -14,18 +18,8 @@ public class FilesDao {
 	// space_key, task_no, reply_no : current값
 	boolean UploadFile(String space_key, int task_no, int reply_no, String file_name, String file_path) {
 		boolean isUploaded = false;
-		String driver = "oracle.jdbc.driver.OracleDriver";
-		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String dbId = "jira";
-		String dbPw = "1234";
 
 		String sql = "INSERT INTO files(file_no, space_key, task_no, reply_no, file_name, file_path, created_at) VALUES (seq_file_no.nextVal, ?, ?, ?, ?, ?, sysdate)";
-
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
