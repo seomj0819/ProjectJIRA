@@ -2,15 +2,14 @@ package SearchCondition;
 
 public class SearchConditionDto {
 	private String searchConditionTitle;
-	private int workerNo;
-	private int creatorNo;
-	private int statusNo;
+	private Integer workerNo;
+	private Integer creatorNo;
+	private Integer statusNo;
 	private String priority;
-	private String labelTitle;
 	private String spaceKey;
 	private String dueDate;
 
-	public SearchConditionDto(String searchConditionTitle, int workerNo, int creatorNo, int statusNo, String priority,
+	public SearchConditionDto(String searchConditionTitle, Integer workerNo, Integer creatorNo, Integer statusNo, String priority,
 			String labelTitle, String spaceKey, String dueDate) {
 		super();
 		this.searchConditionTitle = searchConditionTitle;
@@ -18,7 +17,6 @@ public class SearchConditionDto {
 		this.creatorNo = creatorNo;
 		this.statusNo = statusNo;
 		this.priority = priority;
-		this.labelTitle = labelTitle;
 		this.spaceKey = spaceKey;
 		this.dueDate = dueDate;
 	}
@@ -31,27 +29,27 @@ public class SearchConditionDto {
 		this.searchConditionTitle = searchConditionTitle;
 	}
 
-	public int getWorkerNo() {
+	public Integer getWorkerNo() {
 		return workerNo;
 	}
 
-	public void setWorkerNo(int workerNo) {
+	public void setWorkerNo(Integer workerNo) {
 		this.workerNo = workerNo;
 	}
 
-	public int getCreatorNo() {
+	public Integer getCreatorNo() {
 		return creatorNo;
 	}
 
-	public void setCreatorNo(int creatorNo) {
+	public void setCreatorNo(Integer creatorNo) {
 		this.creatorNo = creatorNo;
 	}
 
-	public int getStatusNo() {
+	public Integer getStatusNo() {
 		return statusNo;
 	}
 
-	public void setStatusNo(int statusNo) {
+	public void setStatusNo(Integer statusNo) {
 		this.statusNo = statusNo;
 	}
 
@@ -61,14 +59,6 @@ public class SearchConditionDto {
 
 	public void setPriority(String priority) {
 		this.priority = priority;
-	}
-
-	public String getLabelTitle() {
-		return labelTitle;
-	}
-
-	public void setLabelTitle(String labelTitle) {
-		this.labelTitle = labelTitle;
 	}
 
 	public String getSpaceKey() {
@@ -87,11 +77,13 @@ public class SearchConditionDto {
 		this.dueDate = dueDate;
 	}
 	
+	public SearchConditionDto() {}
+	
 	@Override
 	public String toString() {
 		return "SearchConditionDto [searchConditionTitle = " + searchConditionTitle 
 				+ ", workerNo = " + workerNo + ", creatorNo = " + creatorNo + ", statusNo = " + statusNo 
-				+ ", priority = " + priority + ", labelTitle = " + labelTitle + ", spaceKey = " + spaceKey 
+				+ ", priority = " + priority + ", spaceKey = " + spaceKey 
 				+ ", dueDate = " + dueDate + "]";
 	}
 
