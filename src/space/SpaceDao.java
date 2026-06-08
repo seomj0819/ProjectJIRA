@@ -178,6 +178,7 @@ public class SpaceDao {
 
 	public static void main(String[] args) throws Exception {
 		SpaceDao dao = new SpaceDao();
+		
 		// 2.1 Create Space(clear!) 
 		// System.out.println(dao.CreateSpace("ABCD", "Project1", "Y"));
 		// 2.2 Delete Space(clear!)

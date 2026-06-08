@@ -217,7 +217,6 @@ public class StatusDao {
 
 	public static void main(String[] args) {
 		StatusDao dao = new StatusDao();
-
 		// 13.1 CreateStatus(Clear!)
 		System.out.println(dao.CreateStatus("ABCD", 2, "진행중", "red"));
 		// 13.2 UpdateStatus(Clear!)

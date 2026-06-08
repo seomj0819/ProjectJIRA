@@ -125,6 +125,7 @@ public class HistoryDao {
 	
 	public static void main(String[] args) {
 		HistoryDao dao = new HistoryDao();
+		
 		//9.1 Create History
 		System.out.println(dao.CreateHistory("ABCD", 1, 1, 1, "reply", "delete", "old", null));
 		//9.2 Show History

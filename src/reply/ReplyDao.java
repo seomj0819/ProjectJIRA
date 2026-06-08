@@ -143,6 +143,7 @@ public class ReplyDao {
 
 	public static void main(String[] args) {
 		ReplyDao dao = new ReplyDao();
+		
 		// 2.1 Write Reply(clear!)
 		// System.out.println(dao.WriteReply("ABCD", 1, 1, "replycontent1", 3));
 		// 2.2 Update Reply(clear!)

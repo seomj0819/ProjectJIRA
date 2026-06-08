@@ -168,6 +168,7 @@ public class ImageDao {
 
 	public static void main(String[] args) {
 		ImageDao dao = new ImageDao();
+		
 		//12.1 Upload Image(Clear!)
 		System.out.println(dao.UploadImage("new_image.jpg", "task"));
 		//12.2 Update Profile Image(Clear!)
