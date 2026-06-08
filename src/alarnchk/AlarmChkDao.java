@@ -118,7 +118,7 @@ public class AlarmChkDao {
 		System.out.println(dao.CreateAlarmCheck(1, 1));
 		//10.2 Delete Alarm Check(Clear!)
 		System.out.println(dao.DeleteAlarmCheck(1, 1));
-		//10.3
+		//10.3 Count Alarm Check(Clear!)
 		System.out.println(dao.CountAlarmCheck(1));
 	}
 }
