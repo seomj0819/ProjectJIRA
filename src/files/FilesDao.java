@@ -50,7 +50,7 @@ public class FilesDao {
 
 	public static void main(String[] args) {
 		FilesDao dao = new FilesDao();
-		//11.1 Upload File
+		//11.1 Upload File(Clear!)
 		System.out.println(dao.UploadFile("ABCD", 1, 1, "file1", "filefjie?"));
 	}
 }

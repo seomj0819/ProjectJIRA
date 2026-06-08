@@ -8,9 +8,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import reply.ReplyListDto;
-
 public class HistoryDao {
+	//명세 9.1
+	// input : space_key, task_no, reply_no, user_no, field_name, action_type, old_value, new_value
+	// output : -
 	boolean CreateHistory(String space_key, int task_no, int reply_no, int user_no, String field_name, String action_type, String old_value, String new_value) {
 		boolean isCreated = false;
 		String driver = "oracle.jdbc.driver.OracleDriver";
@@ -49,7 +50,9 @@ public class HistoryDao {
 
 		return isCreated;
 	}
-	
+	//명세 9.2
+	// input : user_no
+	// output : List<HistoryDto>
 	List<HistoryDto> ShowHistory(int user_no) {
 		List<HistoryDto> list = new ArrayList<>();
 		String driver = "oracle.jdbc.driver.OracleDriver";
@@ -100,7 +103,9 @@ public class HistoryDao {
 
 		return list;
 	}
-	
+	//명세 9.3
+	// input : space_key, task_no
+	// output : List<HistoryDto>
 	List<HistoryDto> ShowTaskHistory(String space_key, int task_no) {
 		List<HistoryDto> list = new ArrayList<>();
 		String driver = "oracle.jdbc.driver.OracleDriver";
@@ -108,12 +113,11 @@ public class HistoryDao {
 		String dbId = "jira";
 		String dbPw = "1234";
 
-		String sql = "SELECT history_no, reply_no, user_no, \r\n"
-				+ "FROM history \r\n"
-				+ "WHERE space_key = current_space_key \r\n"
-				+ "AND task_no = current_task_no\r\n"
-				+ "ORDER BY history_no;\r\n"
-				+ "";
+		String sql = "SELECT history_no, reply_no, user_no, "
+				+ "FROM history "
+				+ "WHERE space_key = ? "
+				+ "AND task_no = ? "
+				+ "ORDER BY history_no";
 
 		try {
 			Class.forName(driver);
@@ -124,21 +128,15 @@ public class HistoryDao {
 		try (Connection conn = DriverManager.getConnection(url, dbId, dbPw);
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-			pstmt.setInt(1, user_no);
+			pstmt.setString(1, space_key);
+			pstmt.setInt(2, task_no);
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
 					HistoryDto dto = new HistoryDto();
 					dto.setHistory_no(rs.getInt("history_no"));
-					dto.setSpace_key(rs.getNString("space_key"));
-					dto.setTask_no(rs.getInt("task_no"));
 					dto.setReply_no(rs.getInt("reply_no"));
 					dto.setUser_no(rs.getInt("user_no"));
-					dto.setField_name(rs.getString("field_name"));
-					dto.setAction_type(rs.getString("action_type"));
-					dto.setCreated_at(rs.getString("created_at"));
-					dto.setOld_value(rs.getString("old_value"));
-					dto.setNew_value(rs.getString("new_value"));
 
 					list.add(dto);
 				}
@@ -152,6 +150,12 @@ public class HistoryDao {
 	}
 	
 	public static void main(String[] args) {
-
+		HistoryDao dao = new HistoryDao();
+		//9.1 Create History
+		System.out.println(dao.CreateHistory("ABCD", 1, 1, 1, "reply", "delete", "old", null));
+		//9.2 Show History
+		System.out.println(dao.ShowHistory(1));
+		//9.3 Show Task History
+		System.out.println(dao.ShowTaskHistory("ABCD", 1));
 	}
 }
